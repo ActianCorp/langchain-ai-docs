@@ -4,12 +4,14 @@ sidebarTitle: API v1 vs v2 overview
 description: Understand the behavior and key differences between the runs endpoint API v1 and v2 namespaces.
 ---
 
-This page summarizes how the two versions differ in serving, routing, and rollout. For version and sunset policy, see [API versioning and support policy](/langsmith/endpoint-deprecation). For step-by-step upgrade steps, see [Migrate API versions (runs endpoint)](/langsmith/endpoint-migration).
+This page summarizes how the API versions differ in serving, routing, and rollout.
 
-The LangSmith runs API provides two namespaces:
+The [LangSmith runs API](https://api.smith.langchain.com/redoc) provides two namespaces:
 
 - **API v1:** The `/api/v1` namespace includes the existing runs endpoints (ingest, query, multipart, etc.).
 - **API v2:** The `/v2` namespace includes the runs endpoints that use the new design.
+
+For version and sunset policy, see [API versioning and support policy](/langsmith/endpoint-deprecation). For step-by-step upgrade steps, see [Migrate API versions (runs endpoint)](/langsmith/endpoint-migration).
 
 ## Key differences between the v1 and v2 namespace
 
@@ -53,7 +55,7 @@ Only certain SDK versions support the runs API in the `/v2` namespace. Use a v2-
 If you're using an older SDK version, upgrade to at least the version listed above to use v2 endpoints. See the [migration guide](/langsmith/endpoint-migration) for request/response changes when moving from v1 to v2.
 
 
-## List Pagination
+## List pagination
 
 List-style responses (for example, from `POST /runs/query`) use cursors for pagination. v1 and v2 differ in how cursors are returned, how they are formatted, and what request options are available.
 
@@ -81,9 +83,9 @@ Run, trace, and session IDs are valid UUIDs in both v1 and v2. The main change i
 
 **v1** — GET run and GET trace runs accept optional query params (`session_id`, `start_time`, or time range). You can fetch a run with only the run ID.
 
-**v2** — Those params are required: `GET /v2/runs/{run_id}` needs `session_id` and `start_time`, `GET /v2/traces/{trace_id}/runs` needs `session_id`, `min_start_time`, and `max_start_time`.
+**v2** — `GET /v2/runs/{run_id}` needs `session_id` and `start_time`, `GET /v2/traces/{trace_id}/runs` needs `session_id`, `min_start_time`, and `max_start_time`.
 
-**UUIDv7 vs other UUIDs** — UUIDv7 encodes a timestamp in its first 48 bits, so `start_time` can be derived from the run ID. UUIDv4 and other non–time-ordered UUIDs do not encode a timestamp; for those, `start_time` must come from somewhere else when calling v2.
+**UUIDv7 vs other UUIDs** — UUIDv7 encodes a timestamp in its first 48 bits, so `start_time` can be derived from the run ID. UUIDv4 and other non–time-ordered UUIDs do not encode a timestamp; for those, `start_time` must come from the trace, a prior query, or your own store when calling v2.
 
 If you generate run IDs: Prefer UUIDv7 for new runs. You can then derive `start_time` from the run ID and call v2 GET run with only the run ID and `session_id`, with no extra lookup. UUIDv7 also dramatically improves performance when querying runs.
 
