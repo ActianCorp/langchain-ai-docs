@@ -1,5 +1,8 @@
 # LangChain Docs
 
+> [!CAUTION]
+> **This repository is deprecated and is no longer actively maintained.** Please do not use this repository for new projects. It exists only as a historical archive.
+
 🦜 **Welcome!** This repository contains the documentation build pipeline for LangChain projects.
 
 * 🏠 [`docs.langchain.com`](https://docs.langchain.com) is our docs home, centralizing LangChain, LangGraph, LangSmith, and LangChain Labs (Deep Agents, Open SWE, Open Agent Platform). This site is hosted on [Mintlify](https://mintlify.com).
