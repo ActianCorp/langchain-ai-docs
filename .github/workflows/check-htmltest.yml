@@ -53,6 +53,11 @@ jobs:
       - name: "Build documentation"
         run: PYTHONPATH=${{ github.workspace }} uv run pipeline build
 
+      - name: "Install htmltest"
+        run: |
+          curl -sSfL https://htmltest.wjdp.uk | bash -s -- -b ./bin
+          ./bin/htmltest -v
+
       - name: "Start Mint dev server and mirror"
         env:
           CI: "true"
@@ -87,8 +92,9 @@ jobs:
             fi
             sleep 2
           done
-          cd ..
-          mkdir -p docs-mirror
+          cd "${{ github.workspace }}"
+          MIRROR_DIR="${{ github.workspace }}/docs-mirror"
+          mkdir -p "$MIRROR_DIR"
           wget \
             --recursive \
             --level=4 \
@@ -102,13 +108,15 @@ jobs:
             --tries=2 \
             -e robots=off \
             --user-agent="LangChain-Docs-Link-Check/1.0" \
-            -P docs-mirror \
+            -P "$MIRROR_DIR" \
             http://localhost:3000/
-
-      - name: "Install htmltest"
-        run: |
-          curl -sSfL https://htmltest.wjdp.uk | bash -s -- -b ./bin
-          ./bin/htmltest -v
+          if [ ! -d "$MIRROR_DIR" ] || [ -z "$(ls -A "$MIRROR_DIR" 2>/dev/null)" ]; then
+            echo "Error: wget did not mirror docs to $MIRROR_DIR"
+            echo "Contents of workspace:"
+            ls -la "${{ github.workspace }}/"
+            exit 1
+          fi
+          echo "Mirrored $(find "$MIRROR_DIR" -type f | wc -l) files to docs-mirror"
 
       - name: "Run htmltest"
         id: htmltest
