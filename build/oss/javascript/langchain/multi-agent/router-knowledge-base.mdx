@@ -45,8 +45,8 @@ The router pattern provides several advantages:
 We will cover the following concepts:
 
 - [Multi-agent systems](/oss/javascript/langchain/multi-agent)
-- [StateGraph](/oss/javascript/langchain/graphs) for workflow orchestration
-- [Send API](/oss/javascript/langchain/send) for parallel execution
+- [StateGraph](/oss/javascript/langgraph/graph-api) for workflow orchestration
+- [Send API](/oss/javascript/langgraph/graph-api#send) for parallel execution
 
 <Tip>
 **Router vs. Subagents**: The [subagents pattern](/oss/javascript/langchain/multi-agent/subagents) can also route to multiple agents. Use the router pattern when you need specialized preprocessing, custom routing logic, or want explicit control over parallel execution. Use the subagents pattern when you want the LLM to decide which agents to call dynamically.
@@ -530,7 +530,7 @@ After all agents complete, the `synthesize_results` function iterates over the c
 - Combines information from all sources without redundancy
 
 <Note>
-**Partial results**: In this tutorial, all selected agents must complete before synthesis. For more advanced patterns where you want to handle partial results or timeouts, see the [map-reduce guide](/oss/javascript/langchain/map-reduce).
+**Partial results**: In this tutorial, all selected agents must complete before synthesis.
 </Note>
 
 ## 8. Complete working example
