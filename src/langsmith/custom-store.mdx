@@ -1,7 +1,7 @@
 ---
 title: How to use a custom store
-sidebarTitle: Custom store
-description: Replace the built-in Postgres store with a custom BaseStore implementation in LangGraph Server.
+sidebarTitle: Add custom store
+description: Replace the built-in Postgres store with a custom BaseStore implementation in your agent deployment.
 ---
 
 When deploying agents to LangSmith, the server provides a built-in Postgres-backed long-term memory store with optional vector search via pgvector. You can replace this with your own @[BaseStore] implementation to use a different storage backend, custom indexing, or specialized search capabilities.
@@ -20,7 +20,7 @@ Starting from an **existing** LangSmith application, create a file that defines 
 langgraph new --template=new-langgraph-project-python my_new_project
 ```
 
-The async context manager pattern lets the server open and close the store connection at the right points in the application lifecycle. Below is an example using @[AsyncSqliteStore] with semantic search:
+The async context manager pattern lets the server open and close the store connection at the right points in the application lifecycle. The following example uses @[AsyncSqliteStore] with semantic search:
 
 <Note>
 SQLite is not recommended for use in production deployments.
@@ -60,7 +60,7 @@ When a custom store is configured, it **replaces** the built-in Postgres store e
 
 ## Configure `langgraph.json`
 
-Add the `store` key to your `langgraph.json` configuration file. The `path` points to the async context manager you defined above.
+Add the `store` key to your [`langgraph.json` configuration file](/langsmith/application-structure#configuration-file-concepts). The `path` points to the async context manager you [defined earlier](#define-the-store).
 
 ```json
 {
