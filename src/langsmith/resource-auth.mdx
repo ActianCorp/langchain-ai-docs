@@ -261,7 +261,11 @@ async def on_assistants(
 async def authorize_store(ctx: Auth.types.AuthContext, value: dict):
     # The "namespace" field for each store item is a tuple you can think of as the directory of an item.
     namespace: tuple = value["namespace"]
-    assert namespace[0] == ctx.user.identity, "Not authorized"
+    if namespace[0] != ctx.user.identity:
+        raise Auth.exceptions.HTTPException(
+            status_code=403,
+            detail="Not authorized",
+        )
 ```
 
 Notice that instead of one global handler, you now have specific handlers for:
