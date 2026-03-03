@@ -21,15 +21,13 @@ Only the LangSmith skills (trace, dataset, evaluator):
   ```bash [macOS/Linux]
   curl -fsSL https://github.com/langchain-ai/langchain-skills/archive/main.tar.gz \
     | tar -xz -C /tmp \
-    && mkdir -p ./.claude/skills \
-    && cp -R /tmp/langchain-skills-main/config/skills/langsmith-{trace,dataset,evaluator} ./.claude/skills/ \
+    && /tmp/langchain-skills-main/install.sh --langsmith -y \
     && rm -rf /tmp/langchain-skills-main
   ```
   ```bash [Windows (WSL/Git Bash)]
   curl -fsSL https://github.com/langchain-ai/langchain-skills/archive/main.tar.gz \
     | tar -xz -C /tmp \
-    && mkdir -p ./.claude/skills \
-    && cp -R /tmp/langchain-skills-main/config/skills/langsmith-{trace,dataset,evaluator} ./.claude/skills/ \
+    && /tmp/langchain-skills-main/install.sh --langsmith -y \
     && rm -rf /tmp/langchain-skills-main
   ```
   </CodeGroup>
@@ -39,15 +37,13 @@ Only the LangSmith skills (trace, dataset, evaluator):
   ```bash [macOS/Linux]
   curl -fsSL https://github.com/langchain-ai/langchain-skills/archive/main.tar.gz \
     | tar -xz -C /tmp \
-    && mkdir -p ~/.claude/skills \
-    && cp -R /tmp/langchain-skills-main/config/skills/langsmith-{trace,dataset,evaluator} ~/.claude/skills/ \
+    && /tmp/langchain-skills-main/install.sh --global --langsmith -y \
     && rm -rf /tmp/langchain-skills-main
   ```
   ```bash [Windows (WSL/Git Bash)]
   curl -fsSL https://github.com/langchain-ai/langchain-skills/archive/main.tar.gz \
     | tar -xz -C /tmp \
-    && mkdir -p ~/.claude/skills \
-    && cp -R /tmp/langchain-skills-main/config/skills/langsmith-{trace,dataset,evaluator} ~/.claude/skills/ \
+    && /tmp/langchain-skills-main/install.sh --global --langsmith -y \
     && rm -rf /tmp/langchain-skills-main
   ```
   </CodeGroup>
@@ -60,15 +56,13 @@ Only the LangSmith skills (trace, dataset, evaluator):
   ```bash [macOS/Linux]
   curl -fsSL https://github.com/langchain-ai/langchain-skills/archive/main.tar.gz \
     | tar -xz -C /tmp \
-    && mkdir -p ./.deepagents/skills \
-    && cp -R /tmp/langchain-skills-main/config/skills/langsmith-{trace,dataset,evaluator} ./.deepagents/skills/ \
+    && /tmp/langchain-skills-main/install.sh --deepagents --langsmith -y \
     && rm -rf /tmp/langchain-skills-main
   ```
   ```bash [Windows (WSL/Git Bash)]
   curl -fsSL https://github.com/langchain-ai/langchain-skills/archive/main.tar.gz \
     | tar -xz -C /tmp \
-    && mkdir -p ./.deepagents/skills \
-    && cp -R /tmp/langchain-skills-main/config/skills/langsmith-{trace,dataset,evaluator} ./.deepagents/skills/ \
+    && /tmp/langchain-skills-main/install.sh --deepagents --langsmith -y \
     && rm -rf /tmp/langchain-skills-main
   ```
   </CodeGroup>
@@ -78,15 +72,13 @@ Only the LangSmith skills (trace, dataset, evaluator):
   ```bash [macOS/Linux]
   curl -fsSL https://github.com/langchain-ai/langchain-skills/archive/main.tar.gz \
     | tar -xz -C /tmp \
-    && mkdir -p ~/.deepagents/langchain_agent/skills \
-    && cp -R /tmp/langchain-skills-main/config/skills/langsmith-{trace,dataset,evaluator} ~/.deepagents/langchain_agent/skills/ \
+    && /tmp/langchain-skills-main/install.sh --deepagents --global --langsmith -y \
     && rm -rf /tmp/langchain-skills-main
   ```
   ```bash [Windows (WSL/Git Bash)]
   curl -fsSL https://github.com/langchain-ai/langchain-skills/archive/main.tar.gz \
     | tar -xz -C /tmp \
-    && mkdir -p ~/.deepagents/langchain_agent/skills \
-    && cp -R /tmp/langchain-skills-main/config/skills/langsmith-{trace,dataset,evaluator} ~/.deepagents/langchain_agent/skills/ \
+    && /tmp/langchain-skills-main/install.sh --deepagents --global --langsmith -y \
     && rm -rf /tmp/langchain-skills-main
   ```
   </CodeGroup>
@@ -136,6 +128,9 @@ cd langchain-skills
 
 # Install for DeepAgents CLI globally (includes agent persona)
 ./install.sh --deepagents --global
+
+# Install only LangSmith skills (any target)
+./install.sh --langsmith
 ```
 
 If you prefer to copy only specific skills, copy the desired directory from `config/skills/` into your agent’s skills folder.
@@ -144,4 +139,3 @@ Included LangSmith skills:
 - langsmith-trace — Traces (query/export)
 - langsmith-dataset — Datasets (generate/upload)
 - langsmith-evaluator — Evaluators (create/attach)
-
