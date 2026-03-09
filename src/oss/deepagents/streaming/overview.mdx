@@ -37,7 +37,7 @@ for namespace, chunk in agent.stream(
     subgraphs=True,  # [!code highlight]
 ):
     if namespace:
-        # Subagent event—namespace identifies the source
+        # Subagent event - namespace identifies the source
         print(f"[subagent: {namespace}]")
     else:
         # Main agent event
@@ -69,7 +69,7 @@ for await (const [namespace, chunk] of await agent.stream(
   }
 )) {
   if (namespace.length > 0) {
-    // Subagent event—namespace identifies the source
+    // Subagent event - namespace identifies the source
     console.log(`[subagent: ${namespace.join("|")}]`);
   } else {
     // Main agent event
@@ -373,7 +373,7 @@ for namespace, chunk in agent.stream(
         for tc in token.tool_call_chunks:
             if tc.get("name"):
                 print(f"\n[{source}] Tool call: {tc['name']}")
-            # Args stream in chunks—write them incrementally
+            # Args stream in chunks - write them incrementally
             if tc.get("args"):
                 print(tc["args"], end="", flush=True)
 
@@ -418,7 +418,7 @@ for await (const [namespace, chunk] of await agent.stream(
       if (tc.name) {
         console.log(`\n[${source}] Tool call: ${tc.name}`);
       }
-      // Args stream in chunks—write them incrementally
+      // Args stream in chunks - write them incrementally
       if (tc.args) {
         process.stdout.write(tc.args);
       }
@@ -613,7 +613,7 @@ Combine multiple stream modes to get a complete picture of agent execution:
 
 :::python
 ```python
-# Skip internal middleware steps—only show meaningful node names
+# Skip internal middleware steps - only show meaningful node names
 INTERESTING_NODES = {"model_request", "tools"}
 
 last_source = ""
@@ -663,7 +663,7 @@ print()
 
 :::js
 ```typescript
-// Skip internal middleware steps—only show meaningful node names
+// Skip internal middleware steps - only show meaningful node names
 const INTERESTING_NODES = new Set(["model_request", "tools"]);
 
 let lastSource = "";
