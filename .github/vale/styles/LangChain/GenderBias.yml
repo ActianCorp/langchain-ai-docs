@@ -29,7 +29,8 @@ swap:
  guys: folks/people
  manmade: manufactured
  manpower: personnel
- men and girls: men and women
+ men and girls: people
+ men and women: people
  middle(?:m[ae]n|wom[ae]n): intermediary
  news(?:m[ae]n|wom[ae]n): journalist(s)
  ombuds(?:man|woman): ombuds
