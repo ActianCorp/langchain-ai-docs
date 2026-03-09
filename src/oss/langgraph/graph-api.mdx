@@ -1204,7 +1204,7 @@ graph.invoke(Command(update={  # [!code --]
     "messages": [{"role": "user", "content": "follow up"}]  # [!code --]
 }), config)  # [!code --]
 
-# CORRECT—plain dict restarts from __start__
+# CORRECT - plain dict restarts from __start__
 graph.invoke( {  # [!code ++]
     "messages": [{"role": "user", "content": "follow up"}]  # [!code ++]
 }, config)  # [!code ++]
