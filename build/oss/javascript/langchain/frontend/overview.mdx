@@ -38,22 +38,19 @@ history, that you render with any framework.
 
 <CodeGroup>
 
-
-
-```ts agent.ts
+```ts Backend
 import { createAgent } from "langchain";
 import { MemorySaver } from "@langchain/langgraph";
 
 const agent = createAgent({
-  model: "openai:gpt-5.4",
+  model: "openai:gpt-4.1",
   tools: [getWeather, searchWeb],
   checkpointer: new MemorySaver(),
 });
 ```
 
-```tsx Chat.tsx
+```tsx Frontend (React)
 import { useStream } from "@langchain/react";
-import type { agent } from "./agent";
 
 function Chat() {
   const stream = useStream<typeof agent>({
@@ -70,7 +67,6 @@ function Chat() {
   );
 }
 ```
-
 
 </CodeGroup>
 
