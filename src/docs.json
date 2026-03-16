@@ -2402,6 +2402,30 @@
     {
       "source": "/langsmith/agent-server-api/crons-plus-tier/delete-cron",
       "destination": "/langsmith/agent-server-api/crons/delete-cron"
+    },
+    {
+      "source": "/oss/javascript/deepagents/overview",
+      "destination": "/oss/javascript/langchain/overview"
+    },
+    {
+      "source": "/oss/javascript/deepagents/quickstart",
+      "destination": "/oss/javascript/langchain/quickstart"
+    },
+    {
+      "source": "/oss/javascript/langchain/install",
+      "destination": "/oss/javascript/langchain/quickstart"
+    },
+    {
+      "source": "/oss/python/deepagents/overview",
+      "destination": "/oss/python/deepagents/overview"
+    },
+    {
+      "source": "/oss/python/deepagents/quickstart",
+      "destination": "/oss/python/langchain/quickstart"
+    },
+    {
+      "source": "/oss/python/langchain/install",
+      "destination": "/oss/python/langchain/quickstart"
     }
   ]
 }
