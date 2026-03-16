@@ -4,7 +4,7 @@ sidebarTitle: Comparison
 description: Compare LangChain Deep Agents with Claude Agent SDK and Codex SDK to choose the right tool for your use case
 ---
 
-This page helps you understand how [LangChain Deep Agents](/oss/deepagents/overview) compare to the [Claude Agent SDK](https://platform.anthropic.com/docs/en/agent-sdk/overview) and the [Codex SDK](https://developers.openai.com/codex/sdk).
+This page helps you understand how [LangChain Deep Agents](/oss/langchain/overview) compare to the [Claude Agent SDK](https://platform.anthropic.com/docs/en/agent-sdk/overview) and the [Codex SDK](https://developers.openai.com/codex/sdk).
 
 ## Overview
 
@@ -15,7 +15,7 @@ This page helps you understand how [LangChain Deep Agents](/oss/deepagents/overv
 | **Architecture** | Python SDK, TypeScript SDK, and CLI | Python SDK, TypeScript SDK | TypeScript SDK, CLI, desktop app, IDE extension, cloud interface |
 | **Execution environment** | Local, remote sandboxes, virtual filesystem | Local | Local, cloud |
 | **Deployment** | LangGraph Platform | Self-hosted | N/A |
-| **Frontend** | [Integration with React](/oss/langchain/streaming/frontend) | Server-side only | Server-side only |
+| **Frontend** | [Integration with React](/oss/langchain/frontend/overview) | Server-side only | Server-side only |
 | **Observability** | LangSmith tracing & evaluations | N/A | OpenAI traces & command-line evaluations |
 | **Security configurability** | Composable, per-tool human-in-the-loop | Permission system with modes, rules and hooks | Built-in tiers using approval modes and OS-level sandboxes |
 | **License** | MIT | MIT (underlying Claude Code is proprietary) | Apache-2.0 |
@@ -57,7 +57,7 @@ This page helps you understand how [LangChain Deep Agents](/oss/deepagents/overv
 | Skills System | ✅ [Skills](/oss/deepagents/skills) | ✅ [Skills](https://platform.claude.com/docs/en/agent-sdk/skills) | ✅ [Skills](https://developers.openai.com/codex/skills) |
 | Additional instructions | ✅ [Memory](/oss/deepagents/customization#memory) | ✅ [CLAUDE.md files](https://platform.claude.com/docs/en/agent-sdk/modifying-system-prompts#method-1-claude-md-files-project-level-instructions) | ✅ [AGENTS.md](https://developers.openai.com/codex/guides/agents-md) |
 | Long-term memory | ✅ [Memory Store](/oss/deepagents/long-term-memory) | ❌ | ❌ |
-| Streaming | ✅ [Streaming](/oss/deepagents/streaming/overview) | ✅ [Streaming](https://platform.claude.com/docs/en/agent-sdk/streaming-output) | ✅ [Streaming](https://github.com/openai/codex/blob/main/sdk/typescript/README.md#streaming-responses) |
+| Streaming | ✅ [Streaming](/oss/deepagents/streaming) | ✅ [Streaming](https://platform.claude.com/docs/en/agent-sdk/streaming-output) | ✅ [Streaming](https://github.com/openai/codex/blob/main/sdk/typescript/README.md#streaming-responses) |
 <tr><td colspan="4"><strong>Sandbox Integrations</strong></td></tr>
 | Agent runs in sandbox | ✅ [Can run in sandbox](/oss/deepagents/sandboxes#agent-in-sandbox-pattern) | ✅ [Can run in sandbox](https://platform.claude.com/docs/en/agent-sdk/hosting) | ✅ [Can run in sandbox](https://developers.openai.com/codex/security#os-level-sandbox) |
 | Agent runs operations in sandboxes | ✅ [Uses sandboxes as tools](/oss/deepagents/sandboxes#sandbox-as-tool-pattern) | ❌ | ❌ |
