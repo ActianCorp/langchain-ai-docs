@@ -1369,21 +1369,7 @@
                       ]
                     },
                     {
-                      "group": "Deep agents capabilities",
-                      "pages": [
-                        "oss/javascript/deepagents/models",
-                        "oss/javascript/deepagents/harness",
-                        "oss/javascript/deepagents/backends",
-                        "oss/javascript/deepagents/subagents",
-                        "oss/javascript/deepagents/human-in-the-loop",
-                        "oss/javascript/deepagents/long-term-memory",
-                        "oss/javascript/deepagents/skills",
-                        "oss/javascript/deepagents/sandboxes"
-                      ]
-                    },
-                    "oss/javascript/deepagents/streaming",
-                    {
-                      "group": "LangChain Core components",
+                      "group": "Core agent components",
                       "pages": [
                         "oss/javascript/langchain/agents",
                         "oss/javascript/langchain/models",
@@ -1395,7 +1381,24 @@
                       ]
                     },
                     {
-                      "group": "LangChain Middleware",
+                      "group": "Advanced capabilities",
+                      "pages": [
+                        "oss/javascript/deepagents/human-in-the-loop",
+                        "oss/javascript/deepagents/long-term-memory",
+                        "oss/javascript/deepagents/skills",
+                        "oss/javascript/deepagents/subagents"
+                      ]
+                    },
+                    {
+                      "group": "Deep agents capabilities",
+                      "pages": [
+                        "oss/javascript/deepagents/harness",
+                        "oss/javascript/deepagents/backends",
+                        "oss/javascript/deepagents/sandboxes"
+                      ]
+                    },
+                    {
+                      "group": "Middleware",
                       "pages": [
                         "oss/javascript/langchain/middleware/overview",
                         "oss/javascript/langchain/middleware/built-in",
@@ -1428,20 +1431,7 @@
                         "oss/javascript/langchain/runtime",
                         "oss/javascript/langchain/context-engineering",
                         "oss/javascript/langchain/mcp",
-                        "oss/javascript/langchain/human-in-the-loop",
-                        {
-                          "group": "Multi-agent",
-                          "pages": [
-                            "oss/javascript/langchain/multi-agent/index",
-                            "oss/javascript/langchain/multi-agent/subagents",
-                            "oss/javascript/langchain/multi-agent/handoffs",
-                            "oss/javascript/langchain/multi-agent/skills",
-                            "oss/javascript/langchain/multi-agent/router",
-                            "oss/javascript/langchain/multi-agent/custom-workflow"
-                          ]
-                        },
-                        "oss/javascript/langchain/retrieval",
-                        "oss/javascript/langchain/long-term-memory"
+                        "oss/javascript/langchain/retrieval"
                       ]
                     },
                     {
