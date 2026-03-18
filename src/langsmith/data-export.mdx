@@ -18,7 +18,7 @@ This page covers how to:
 - Create and configure an export job, including scheduled exports and field filtering
 - Monitor export progress
 
-**Before you start:** exports may take some time depending on data volume, and LangSmith limits how many exports can run concurrently. Bulk exports have a 72-hour runtime timeout — refer to [Automatic retry behavior](/langsmith/data-export-monitor#automatic-retry-behavior) for details. Once launched, LangSmith handles orchestration and [resilience of the export process](/langsmith/data-export-monitor#failure-modes-and-retry-policy) automatically.
+**Before you start:** exports may take some time depending on data volume, and LangSmith limits how many exports can run concurrently. Bulk exports have a 72-hour runtime timeout—refer to [Automatic retry behavior](/langsmith/data-export-monitor#automatic-retry-behavior) for details. Once launched, LangSmith handles orchestration and [resilience of the export process](/langsmith/data-export-monitor#failure-modes-and-retry-policy) automatically.
 
 ## 1. Create a destination
 
@@ -114,7 +114,7 @@ curl --request POST \
 - `end_time` must be omitted for scheduled exports; it is still required for one-time exports.
 - Each spawned export covers `start_time` to `start_time + interval_hours`, then advances by `interval_hours` for each subsequent run. Since `end_time` is exclusive, consecutive exports do not overlap.
 - Spawned exports run at `end_time + 10 minutes` to account for runs submitted with `end_time` in the recent past.
-- Spawned exports have the `source_bulk_export_id` attribute filled. If desired, they must be cancelled separately — cancelling the source export **does not** cancel already-spawned exports.
+- Spawned exports have the `source_bulk_export_id` attribute filled. If desired, they must be cancelled separately—cancelling the source export **does not** cancel already-spawned exports.
 - To stop a scheduled export, [cancel it](/langsmith/data-export-monitor#stop-an-export).
 
 **Example**
