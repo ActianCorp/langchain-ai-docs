@@ -20,10 +20,8 @@ Pass a key and an async loader function. `swr` returns the cached value if avail
 ```python
 from langgraph_sdk.cache import swr
 
-async def my_node(state, config):
-    result = await swr("config:global", load_config)
-    config_data = result.value
-    ...
+result = await swr("config:global", load_config)
+config_data = result.value
 ```
 
 On the first call, `swr` awaits `load_config()` and caches the result. On subsequent calls, it returns the cached value instantly and revalidates in the background.
@@ -135,14 +133,11 @@ For simple get/set caching without revalidation, use `cache_get` and `cache_set`
 from datetime import timedelta
 from langgraph_sdk.cache import cache_get, cache_set
 
-async def my_node(state, config):
-    value = await cache_get("my-key")
+value = await cache_get("my-key")
 
-    if value is None:
-        value = await expensive_computation()
-        await cache_set("my-key", value, ttl=timedelta(hours=1))
-
-    ...
+if value is None:
+    value = await expensive_computation()
+    await cache_set("my-key", value, ttl=timedelta(hours=1))
 ```
 
 ### `cache_get`
