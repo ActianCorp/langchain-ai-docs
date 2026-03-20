@@ -51,10 +51,10 @@ result = await swr(
 
 | Cache state | Condition | Behavior |
 |---|---|---|
-| **Miss** | Key not in cache | Awaits `loader()`, stores result, returns it |
-| **Fresh** | `age < fresh_for` | Returns cached value, no revalidation |
-| **Stale** | `fresh_for <= age < max_age` | Returns cached value immediately, triggers background refresh |
-| **Expired** | `age >= max_age` | Awaits `loader()`, stores result, returns it |
+| **Miss** | Key not in cache | Awaits `loader()`, stores result, returns it. |
+| **Fresh** | `age < fresh_for` | Returns cached value, no revalidation. |
+| **Stale** | `fresh_for <= age < max_age` | Returns cached value immediately, triggers background refresh. |
+| **Expired** | `age >= max_age` | Awaits `loader()`, stores result, returns it. |
 
 ## Use with Pydantic models
 
