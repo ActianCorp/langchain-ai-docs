@@ -44,7 +44,7 @@ graph TB
     class Execute output
 ```
 
-This page explains how to [choose a backend](#specify-a-backend), [route different paths to different backends](#route-to-different-backends), [implement your own virtual filesystem](#use-a-virtual-filesystem) (e.g., S3 or Postgres), [add policy hooks](#add-policy-hooks), [work with binary and multimodal files](#multimodal-and-binary-files), [comply with the backend protocol](#protocol-reference), and [migrate from V1](#migrating-from-v1).
+This page explains how to [choose a backend](#specify-a-backend), [route different paths to different backends](#route-to-different-backends), [implement your own virtual filesystem](#use-a-virtual-filesystem) (e.g., S3 or Postgres), [add policy hooks](#add-policy-hooks), [work with binary and multimodal files](#multimodal-and-binary-files), [comply with the backend protocol](#protocol-reference), and [update existing backends to V2](#update-existing-backends-to-v2).
 
 ## Quickstart
 
@@ -311,7 +311,7 @@ class S3Backend implements BackendProtocolV2 {
 
 Postgres-style outline:
 
-- Table `files(path text primary key, content text, mime_type text, created_at timestamptz, modified_at timestamptz)`
+- Table `files(path text primary key, content text, created_at timestamptz, modified_at timestamptz)`
 - Map tool operations onto SQL:
   - `ls` uses `WHERE path LIKE $1 || '%'` → return `LsResult`
   - `glob` filter in SQL or fetch then apply glob locally → return `GlobResult`
@@ -421,31 +421,23 @@ if (result.error) {
 `FileData` is the type used to store file content in state and store backends.
 
 ```typescript
-interface FileData {
-  content: string | Uint8Array;  // string for text, Uint8Array for binary
-  mimeType: string;              // e.g. "text/plain", "image/png"
-  created_at: string;            // ISO 8601 timestamp
-  modified_at: string;           // ISO 8601 timestamp
-}
+type FileData =
+  // Current format
+  | {
+      content: string | Uint8Array; // string for text, Uint8Array for binary
+      mimeType: string;             // e.g. "text/plain", "image/png"
+      created_at: string;           // ISO 8601 timestamp
+      modified_at: string;          // ISO 8601 timestamp
+    }
+  // Legacy format
+  | {
+      content: string[];   // array of lines
+      created_at: string;  // ISO 8601 timestamp
+      modified_at: string; // ISO 8601 timestamp
+    };
 ```
 
-<Accordion title="Legacy format">
-  Older data may use a legacy format where `content` is a `string[]` (one entry per line) and `mimeType` is absent. The framework reads both formats transparently. Use `migrateToFileDataV2()` to normalize legacy data if needed.
-</Accordion>
-
-<Tip>
-Use `BackendOptions.fileFormat` to control the write format. Set `fileFormat: "v1"` during rolling deployments where older readers need the legacy line-array format. The default is `"v2"`.
-</Tip>
-
-### Utility functions
-
-| Function | Description |
-|----------|-------------|
-| `createFileData(content, createdAt?, fileFormat?, mimeType?)` | Create a `FileData` object in the requested format |
-| `isFileDataV1(data)` | Type guard for V1 format (content is `string[]`) |
-| `migrateToFileDataV2(data, filePath)` | Convert V1 data to V2 (joins lines, infers MIME type) |
-| `isTextMimeType(mimeType)` | Check if a MIME type is text-based |
-| `getMimeType(filePath)` | Get MIME type from file extension |
+Backends may encounter either format when reading from state or store. The framework handles both transparently.
 
 ## Protocol reference
 
@@ -511,7 +503,7 @@ Backends implement `BackendProtocolV2`. All query methods return structured Resu
 
 Use the `isSandboxBackend()` type guard to check if a backend supports execution.
 
-## Migrating from V1
+## Update existing backends to V2
 
 <Accordion title="Migration guide">
 
@@ -553,22 +545,5 @@ const v2Sandbox = adaptSandboxProtocol(v1Sandbox);
 <Note>
 The framework auto-adapts V1 backends passed to `createDeepAgent()`. Manual adaptation is only needed when calling protocol methods directly.
 </Note>
-
-### FileData migration
-
-Use `migrateToFileDataV2()` to normalize legacy V1 data (line arrays) to V2 format (single string + MIME type):
-
-:::js
-```typescript
-import { migrateToFileDataV2, isFileDataV1 } from "deepagents";
-
-if (isFileDataV1(data)) {
-  const v2Data = migrateToFileDataV2(data, "/path/to/file.txt");
-  // { content: "line1\nline2", mimeType: "text/plain", created_at: ..., modified_at: ... }
-}
-```
-:::
-
-For rolling deployments where older readers still expect V1 format, set `BackendOptions.fileFormat: "v1"` to continue writing in the legacy format.
 
 </Accordion>

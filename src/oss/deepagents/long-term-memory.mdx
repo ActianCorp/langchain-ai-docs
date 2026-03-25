@@ -508,7 +508,7 @@ const fileData = createFileData("Hello\nWorld");
 :::
 
 <Note>
-Legacy data (with `content` as a `string[]` of lines and no `mimeType`) is still readable. Use `migrateToFileDataV2()` to normalize legacy data, or set `BackendOptions.fileFormat: "v1"` during rolling deployments.
+Legacy data (with `content` as a `string[]` of lines and no `mimeType`) is still readable. The framework handles both formats transparently.
 </Note>
 
 For more details on backend protocols, see [Backends](/oss/deepagents/backends#protocol-reference).
