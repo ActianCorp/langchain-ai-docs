@@ -188,7 +188,7 @@ Use with extreme caution and only in appropriate environments.
 - Pass a backend to `create_deep_agent(backend=...)`. The filesystem middleware uses it for all tooling.
 - You can pass either:
     - An instance implementing `BackendProtocolV2` (for example, `FilesystemBackend(root_dir=".")`), or
-    - A factory `BackendFactory = Callable[[ToolRuntime], BackendProtocolV2]` (for backends that need runtime like `StateBackend` or `StoreBackend`).
+    - A `BackendFactory` function `(stateAndStore: StateAndStore) => BackendProtocolV2` (for backends that need runtime state or a store, like `StateBackend` or `StoreBackend`).
 - If omitted, the default is `lambda rt: StateBackend(rt)`.
 
 <Note>
@@ -371,12 +371,12 @@ class PolicyWrapper implements BackendProtocolV2 {
   grep(pattern: string, path?: string | null, glob?: string | null) { return this.inner.grep(pattern, path, glob); }
   glob(pattern: string, path?: string) { return this.inner.glob(pattern, path); }
 
-  write(filePath: string, content: string): WriteResult {
+  async write(filePath: string, content: string): Promise<WriteResult> {
     if (this.deny(filePath)) return { error: `Writes are not allowed under ${filePath}` };
     return this.inner.write(filePath, content);
   }
 
-  edit(filePath: string, oldString: string, newString: string, replaceAll?: boolean): EditResult {
+  async edit(filePath: string, oldString: string, newString: string, replaceAll?: boolean): Promise<EditResult> {
     if (this.deny(filePath)) return { error: `Edits are not allowed under ${filePath}` };
     return this.inner.edit(filePath, oldString, newString, replaceAll);
   }
@@ -457,7 +457,7 @@ Backends implement `BackendProtocolV2`. All query methods return structured Resu
 - **`readRaw(filePath: string) → ReadRawResult`**
   - Read file content as raw `FileData`. Returns the full file data including timestamps.
 
-- **`grep(pattern: string, path?: string, glob?: string) → GrepResult`**
+- **`grep(pattern: string, path?: string | null, glob?: string | null) → GrepResult`**
   - Search file contents for a literal text pattern. Binary files (determined by MIME type) are skipped.
   - Return structured `GrepMatch` entries. On failure, return `{ error: "..." }`.
 
@@ -479,7 +479,7 @@ Backends implement `BackendProtocolV2`. All query methods return structured Resu
 
 | Type | Success fields | Error field |
 |------|----------------|-------------|
-| `ReadResult` | `content: string \| Uint8Array`, `mimeType: string` | `error` |
+| `ReadResult` | `content?: string \| Uint8Array`, `mimeType?: string` | `error` |
 | `ReadRawResult` | `data: FileData` | `error` |
 | `LsResult` | `files: FileInfo[]` | `error` |
 | `GlobResult` | `files: FileInfo[]` | `error` |
