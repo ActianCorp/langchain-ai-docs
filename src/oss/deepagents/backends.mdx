@@ -205,7 +205,7 @@ Use with extreme caution and only in appropriate environments.
 - If omitted, the default is `(config) => new StateBackend(config)`.
 
 <Note>
-V1 backends are automatically adapted to V2 at runtime via `adaptBackendProtocol()`. No code changes are required to keep using existing V1 backends.
+Before version 1.9.0, only `BackendProtocol` was supported which is now `BackendProtocolV1`. V1 backends are automatically adapted to V2 at runtime via `adaptBackendProtocol()`. No code changes are required to keep using existing V1 backends. To update to v2, see [update existing backends to v2](#update-existing-backends-to-v2).
 </Note>
 :::
 
