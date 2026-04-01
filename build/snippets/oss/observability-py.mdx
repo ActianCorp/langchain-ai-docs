@@ -13,9 +13,6 @@ with ls.tracing_context(enabled=True):
 agent.invoke({"messages": [{"role": "user", "content": "Send another email"}]})
 ```
 
-
-
-
 ## Log to a project
 
 <Accordion title="Statically">
@@ -39,9 +36,6 @@ with ls.tracing_context(project_name="email-agent-test", enabled=True):
         "messages": [{"role": "user", "content": "Send a welcome email"}]
     })
 ```
-
-
-
 </Accordion>
 
 ## Add metadata to traces
@@ -74,9 +68,6 @@ with ls.tracing_context(
         {"messages": [{"role": "user", "content": "Send a welcome email"}]}
     )
 ```
-
-
-
 
 This custom metadata and tags will be attached to the trace in LangSmith.
 
