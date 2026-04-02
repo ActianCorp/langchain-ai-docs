@@ -5,6 +5,8 @@ sidebarTitle: Claude Code
 
 This guide shows you how to automatically send conversations from the [Claude Code CLI](https://code.claude.com/docs/en/overview) to LangSmith.
 
+![](/langsmith/images/example-claude-code-plugin-trace.png)
+
 Once configured, each Claude Code project can opt in to sending traces to LangSmith. Each trace includes user messages, tool calls, and assistant responses. System prompts are not included, because Claude Code does not return them in conversation transcripts.
 
 ## Prerequisites
@@ -33,7 +35,7 @@ To update the plugin, run:
 /reload-plugins
 ```
 
-If you are migrating from the previous recommended version of with manually created stop hooks, see [this section](#migrating-from-manual-stop-hook).
+<Note> If you are migrating from the previous recommended version of with manually created stop hooks, see [this section](#migrating-from-the-manual-stop-hook). </Note>
 
 ### Setting environment variables
 
@@ -72,7 +74,7 @@ export CC_LANGSMITH_PROJECT="my-project"
 
 ## Verify setup
 
-Traces will appear in LangSmith after Claude Code responds.
+Traces will appear complete in LangSmith after Claude Code responds. Note that if you interrupt a run while it is in progress, the plugin will only flush that run when you send the next message or end the session.
 
 In LangSmith, you'll see:
 
@@ -190,7 +192,7 @@ ls -lh ~/.claude/state/hook.log
 > ~/.claude/state/hook.log
 ```
 
-## Migrating from manual stop hook
+## Migrating from the manual stop hook
 
 If you were using the previous version of tracing Claude Code with LangSmith, you will need to remove `~/.claude/hooks/stop_hook.sh` and remove the reference to the hook from any previous `settings.local.json` or `settings.json` files you added it to previously, then following the [plugin installation instructions](#getting-started) above.
 
