@@ -170,11 +170,14 @@ In Deep Agents, memory is stored as files in a virtual filesystem. By default, f
 import { createDeepAgent, CompositeBackend, StateBackend, StoreBackend } from "deepagents";
 
 const agent = createDeepAgent({
-  backend: (rt) => new CompositeBackend(
-    new StateBackend(rt),
+  backend: new CompositeBackend(
+    new StateBackend(),
     {
-      "/memories/": new StoreBackend(rt, {
-        namespace: (ctx) => [ctx.runtime.context.userId],
+      "/memories/": new StoreBackend({
+        namespace: (ctx) => {
+          const config = getConfig();
+          return [ctx.runtime.context.userId];
+        },
       }),
     },
   ),
@@ -200,10 +203,10 @@ import { getConfig } from "@langchain/langgraph";
 import { createDeepAgent, CompositeBackend, StateBackend, StoreBackend } from "deepagents";
 
 const agent = createDeepAgent({
-  backend: (rt) => new CompositeBackend(
-    new StateBackend(rt),
+  backend: new CompositeBackend(
+    new StateBackend(),
     {
-      "/memories/": new StoreBackend(rt, {
+      "/memories/": new StoreBackend({
         namespace: (ctx) => {
           const config = getConfig();
           return [config.metadata.assistantId];
@@ -227,10 +230,10 @@ export { agent };
 import { createDeepAgent, CompositeBackend, StateBackend, StoreBackend } from "deepagents";
 
 const agent = createDeepAgent({
-  backend: (rt) => new CompositeBackend(
-    new StateBackend(rt),
+  backend: new CompositeBackend(
+    new StateBackend(),
     {
-      "/memories/": new StoreBackend(rt, {
+      "/memories/": new StoreBackend({
         namespace: (ctx) => [ctx.runtime.context.orgId],
       }),
     },
@@ -504,10 +507,10 @@ const createSandboxSyncMiddleware = (backend: CompositeBackend) => {
 const backend = new CompositeBackend(
   await DaytonaSandbox.fromId(sandbox.id),
   {
-    "/skills/": new StoreBackend(rt, {
+    "/skills/": new StoreBackend({
       namespace: (ctx) => ["skills", ctx.runtime.context.userId],
     }),
-    "/memories/": new StoreBackend(rt, {
+    "/memories/": new StoreBackend({
       namespace: (ctx) => ["memories", ctx.runtime.context.userId],
     }),
   },

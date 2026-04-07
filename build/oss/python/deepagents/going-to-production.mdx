@@ -169,11 +169,10 @@ from deepagents import create_deep_agent
 from deepagents.backends import CompositeBackend, StateBackend, StoreBackend
 
 agent = create_deep_agent(
-    backend=lambda rt: CompositeBackend(
-        default=StateBackend(rt),
+    backend=CompositeBackend(
+        default=StateBackend(),
         routes={
             "/memories/": StoreBackend(
-                rt,
                 namespace=lambda ctx: (ctx.runtime.context.user_id,),
             ),
         },
@@ -199,11 +198,10 @@ from deepagents.backends import CompositeBackend, StateBackend, StoreBackend
 from langgraph.config import get_config
 
 agent = create_deep_agent(
-    backend=lambda rt: CompositeBackend(
-        default=StateBackend(rt),
+    backend=CompositeBackend(
+        default=StateBackend(),
         routes={
             "/memories/": StoreBackend(
-                rt,
                 namespace=lambda ctx: (
                     get_config()["metadata"]["assistant_id"],
                 ),
@@ -225,11 +223,10 @@ from deepagents import create_deep_agent
 from deepagents.backends import CompositeBackend, StateBackend, StoreBackend
 
 agent = create_deep_agent(
-    backend=lambda rt: CompositeBackend(
-        default=StateBackend(rt),
+    backend=CompositeBackend(
+        default=StateBackend(),
         routes={
             "/memories/": StoreBackend(
-                rt,
                 namespace=lambda ctx: (ctx.runtime.context.org_id,),
             ),
         },
