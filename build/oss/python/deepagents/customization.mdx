@@ -168,7 +168,6 @@ If you are using memory, skills, or human-in-the-loop, the following middleware 
 - [`MemoryMiddleware`](https://reference.langchain.com/python/deepagents/middleware/memory/MemoryMiddleware): Persists and retrieves conversation context across sessions when the `memory` argument is provided
 - [`SkillsMiddleware`](https://reference.langchain.com/python/deepagents/middleware/skills/SkillsMiddleware): Enables custom skills when the `skills` argument is provided
 - `HumanInTheLoopMiddleware`: Pauses for human approval or input at specified points when the `interruptOn` argument is provided
-:::
 
 ### Pre-built middleware
 
@@ -179,6 +178,10 @@ The `deepagents` library also exposes [create_summarization_tool_middleware](htt
 
 
 
+
+### Provider-specific middleware
+
+For provider-specific middleware that is optimized for specific LLM providers, see [Official integrations](/oss/python/integrations/middleware#official-integrations) and [Community integrations](/oss/python/integrations/middleware#community-integrations).
 
 ### Custom middleware
 
@@ -233,7 +236,7 @@ Graph state is scoped to a thread by design, so updates are safe under concurren
 
 **Do this:**
 
-:```python
+```python
 class CustomMiddleware(AgentMiddleware):
     def __init__(self):
         pass
@@ -241,13 +244,13 @@ class CustomMiddleware(AgentMiddleware):
     def before_agent(self, state, runtime):
         return {"x": state.get("x", 0) + 1}  # Update graph state instead
 ```
-:
 
-::
+
+
 
 Do **not** do this:
 
-:```python
+```python
 class CustomMiddleware(AgentMiddleware):
     def __init__(self):
         self.x = 1
@@ -255,9 +258,9 @@ class CustomMiddleware(AgentMiddleware):
     def before_agent(self, state, runtime):
         self.x += 1  # Mutation causes race conditions
 ```
-:
 
-::
+
+
 
 Mutation in place, such as modifying `self.x` in `before_agent` or changing other shared values in hooks, can lead to subtle bugs and race conditions because many operations run concurrently (subagents, parallel tools, and parallel invocations on different threads).
 
