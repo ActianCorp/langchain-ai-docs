@@ -52,9 +52,18 @@ Sandboxes are especially useful for:
     **Using the Deep Agents CLI?** The CLI has built-in sandbox support via the `--sandbox` flag. See [Use remote sandboxes](/oss/javascript/deepagents/cli/overview#use-remote-sandboxes) for CLI-specific setup, flags (`--sandbox-id`, `--sandbox-setup`), and examples.
 </Tip>
 
+## Basic usage
+
+These examples assume you have already created a sandbox/devbox using the provider's SDK and have credentials set up. For signup, authentication, and provider-specific lifecycle details, see [Available providers](#available-providers).
+
+<SandboxBasicJs />
+
+
+
+
 ## Available providers
 
-For provider-specific setup, authentication, and lifecycle details, see the provider integration pages:
+
 
 <CardGroup cols={2}>
     <Card title="Modal" icon="/images/providers/modal-icon.svg" href="/oss/javascript/integrations/providers/modal">
@@ -69,21 +78,13 @@ For provider-specific setup, authentication, and lifecycle details, see the prov
     <Card title="Node VFS" icon="/images/providers/nodejs-icon.svg" href="/oss/javascript/integrations/providers/node-vfs">
         Local development, testing, no cloud required.
     </Card>
+    <Card title="LangSmith" icon="tools" href="/langsmith/sandboxes">
+        (Private beta) Managed sandboxes with warm pools, auth proxy, and SDK support.
+    </Card>
 </CardGroup>
 
 
-
-
-If you provide a sandbox platform and want to contribute an integration, see [Contributing a sandbox integration](/oss/javascript/contributing/integrations-langchain).
-
-## Basic usage
-
-These examples assume you have already created a sandbox/devbox using the provider's SDK and have credentials set up. For signup, authentication, and provider-specific lifecycle details, see [Available providers](#available-providers).
-
-<SandboxBasicJs />
-
-
-
+Don't see your provider? You can implement your own sandbox backend. See [Contributing a sandbox integration](/oss/javascript/contributing/integrations-langchain).
 
 ## Lifecycle and scoping
 
@@ -244,11 +245,9 @@ Trade-offs:
 
 - 🔴 Network latency on each execution call.
 
-Example:
 
 
-
-```typescript
+```typescript Example
 import "dotenv/config";
 import { DaytonaSandbox } from "@langchain/daytona";
 import { createDeepAgent } from "deepagents";
@@ -277,8 +276,8 @@ try {
       ? lastMessage.content
       : String(lastMessage.content),
   );
-} finally {
-  // Optional: delete the sandbox proactively when the agent finishes
+} catch (err) {
+  // Optional: delete the sandbox proactively on an exception
   await sandbox.close();
   throw err;
 }
@@ -289,30 +288,6 @@ try {
 The examples in this doc use the sandbox as a tool pattern.
 Choose the agent in sandbox pattern when your provider's SDK handles the communication layer and you want production to mirror local development.
 Choose the sandbox as tool pattern when you need to iterate quickly on agent logic, keep API keys outside the sandbox, or prefer cleaner separation of concerns.
-
-## Available providers
-
-For provider-specific setup, authentication, and lifecycle details, see the provider integration pages:
-
-<CardGroup cols={2}>
-    <Card title="Modal" icon="/images/providers/modal-icon.svg" href="/oss/javascript/integrations/providers/modal">
-        ML/AI workloads, GPU access, Python.
-    </Card>
-    <Card title="Daytona" icon="/images/providers/daytona-icon.svg" href="/oss/javascript/integrations/providers/daytona">
-        TypeScript/Python development, fast cold starts.
-    </Card>
-    <Card title="Deno" icon="/images/providers/deno-icon.svg" href="/oss/javascript/integrations/providers/deno">
-        Deno/JavaScript workloads, microVMs.
-    </Card>
-    <Card title="Node VFS" icon="/images/providers/nodejs-icon.svg" href="/oss/javascript/integrations/providers/node-vfs">
-        Local development, testing, no cloud required.
-    </Card>
-</CardGroup>
-
-
-
-
-If you provide a sandbox platform and want to contribute an integration, see [Contributing a sandbox integration](/oss/javascript/contributing/integrations-langchain).
 
 ## How sandboxes work
 
