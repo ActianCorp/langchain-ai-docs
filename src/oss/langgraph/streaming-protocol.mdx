@@ -325,7 +325,7 @@ event: messages-tuple|outer_tools:call_xyz|inner_tools:call_abc
 data: [...]
 ```
 
-**Parsing the namespace**
+You can parse the namespace from the data as follows:
 
 ```typescript
 function parseEventName(raw: string): { mode: string; namespace: string[] } {
