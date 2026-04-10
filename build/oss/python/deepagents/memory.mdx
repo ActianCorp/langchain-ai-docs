@@ -28,7 +28,7 @@ Give the agent its own persistent identity that evolves over time. Agent-scoped 
 The key is the backend namespace: setting it to `(assistant_id,)` means every conversation for this agent reads and writes to the same memory file.
 
 <Note>
-Accessing `ctx.runtime.server_info` requires `deepagents>=0.5.0`. On older versions, read the assistant ID from `get_config()["metadata"]["assistant_id"]` instead.
+Accessing `rt.server_info` requires `deepagents>=0.5.0`. On older versions, read the assistant ID from `get_config()["metadata"]["assistant_id"]` instead.
 </Note>
 
 
@@ -45,13 +45,13 @@ agent = create_deep_agent(
         default=StateBackend(),
         routes={
             "/memories/": StoreBackend(
-                namespace=lambda ctx: (
-                    ctx.runtime.server_info.assistant_id,  # [!code highlight]
+                namespace=lambda rt: (
+                    rt.server_info.assistant_id,  # [!code highlight]
                 ),
             ),
             "/skills/": StoreBackend(
-                namespace=lambda ctx: (
-                    ctx.runtime.server_info.assistant_id,  # [!code highlight]
+                namespace=lambda rt: (
+                    rt.server_info.assistant_id,  # [!code highlight]
                 ),
             ),
         },
@@ -108,10 +108,10 @@ agent = create_deep_agent(
         default=StateBackend(rt),
         routes={
             "/memories/": StoreBackend(
-                rt, namespace=lambda ctx: ("my-agent",)
+                rt, namespace=lambda rt: ("my-agent",)
             ),
             "/skills/": StoreBackend(
-                rt, namespace=lambda ctx: ("my-agent",)
+                rt, namespace=lambda rt: ("my-agent",)
             ),
         },
     ),
@@ -155,10 +155,10 @@ agent = create_deep_agent(
         default=StateBackend(),
         routes={
             "/memories/": StoreBackend(
-                namespace=lambda ctx: (ctx.runtime.context.user_id,),
+                namespace=lambda rt: (rt.server_info.user.identity,),
             ),
             "/skills/": StoreBackend(
-                namespace=lambda ctx: (ctx.runtime.context.user_id,),
+                namespace=lambda rt: (rt.server_info.user.identity,),
             ),
         },
     ),
@@ -174,17 +174,11 @@ Seed per-user memories and invoke the agent as two different users. Each user se
 
 ```python
 from langchain_core.utils.uuid import uuid7
-from dataclasses import dataclass
 
 from deepagents import create_deep_agent
 from deepagents.backends import CompositeBackend, StateBackend, StoreBackend
 from deepagents.backends.utils import create_file_data
 from langgraph.store.memory import InMemoryStore
-
-
-@dataclass
-class Context:
-    user_id: str
 
 
 store = InMemoryStore()  # Use platform store when deploying to LangSmith
@@ -225,35 +219,28 @@ Use the fetch_url tool to read https://docs.langchain.com/llms.txt, then fetch r
 agent = create_deep_agent(
     memory=["/memories/preferences.md"],
     skills=["/skills/"],
-    context_schema=Context,
     backend=lambda rt: CompositeBackend(
         default=StateBackend(rt),
         routes={
             "/memories/": StoreBackend(
                 rt,
-                namespace=lambda ctx: (ctx.runtime.context.user_id,),
+                namespace=lambda rt: (rt.server_info.user.identity,),
             ),
             "/skills/": StoreBackend(
                 rt,
-                namespace=lambda ctx: (ctx.runtime.context.user_id,),
+                namespace=lambda rt: (rt.server_info.user.identity,),
             ),
         },
     ),
     store=store,
 )
 
-# Alice's conversation — agent sees her preferences
+# When deployed, each authenticated request resolves
+# `rt.server_info.user.identity` to the calling user, so Alice and Bob
+# automatically see only their own preferences.
 agent.invoke(
     {"messages": [{"role": "user", "content": "How do I read a CSV file?"}]},
     config={"configurable": {"thread_id": str(uuid7())}},
-    context=Context(user_id="user-alice"),
-)
-
-# Bob's conversation — agent sees his preferences, not Alice's
-agent.invoke(
-    {"messages": [{"role": "user", "content": "How do I read a CSV file?"}]},
-    config={"configurable": {"thread_id": str(uuid7())}},
-    context=Context(user_id="user-bob"),
 )
 ```
 
@@ -348,10 +335,10 @@ agent = create_deep_agent(
         default=StateBackend(),
         routes={
             "/memories/": StoreBackend(
-                namespace=lambda ctx: (ctx.runtime.context.user_id,),
+                namespace=lambda rt: (rt.server_info.user.identity,),
             ),
             "/policies/": StoreBackend(
-                namespace=lambda ctx: (ctx.runtime.context.org_id,),
+                namespace=lambda rt: (rt.context.org_id,),
             ),
         },
     ),
@@ -534,9 +521,9 @@ To give each agent its own memory in a shared deployment, add `assistant_id` to 
 
 ```python
 StoreBackend(
-    namespace=lambda ctx: (
-        ctx.runtime.server_info.assistant_id,  # [!code highlight]
-        ctx.runtime.context.user_id,
+    namespace=lambda rt: (
+        rt.server_info.assistant_id,  # [!code highlight]
+        rt.server_info.user.identity,
     ),
 )
 ```

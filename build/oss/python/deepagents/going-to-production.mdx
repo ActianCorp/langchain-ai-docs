@@ -165,7 +165,7 @@ Shared memory (assistant, user, or organization scope) is a vector for prompt in
 In Deep Agents, memory is stored as files in a virtual filesystem. By default, files only last for a single conversation. To persist them, route a path like `/memories/` to a [StoreBackend](https://reference.langchain.com/python/deepagents/backends/store/StoreBackend) that writes to the LangGraph [Store](/langsmith/custom-store). Use a [CompositeBackend](https://reference.langchain.com/python/deepagents/backends/composite/CompositeBackend) to give the agent both ephemeral scratch space and persistent [long-term memory](/oss/python/deepagents/memory).
 
 <Note>
-The `ctx.runtime.server_info` and `ctx.runtime.execution_info` namespace patterns shown below require `deepagents>=0.5.0`.
+The `rt.server_info` and `rt.execution_info` namespace patterns shown below require `deepagents>=0.5.0`.
 </Note>
 
 
@@ -184,9 +184,9 @@ agent = create_deep_agent(
         default=StateBackend(),
         routes={
             "/memories/": StoreBackend(
-                namespace=lambda ctx: (
-                    ctx.runtime.server_info.assistant_id,  # [!code highlight]
-                    ctx.runtime.server_info.user.identity,  # [!code highlight]
+                namespace=lambda rt: (
+                    rt.server_info.assistant_id,  # [!code highlight]
+                    rt.server_info.user.identity,  # [!code highlight]
                 ),
             ),
         },
@@ -215,8 +215,8 @@ agent = create_deep_agent(
         default=StateBackend(),
         routes={
             "/memories/": StoreBackend(
-                namespace=lambda ctx: (
-                    ctx.runtime.server_info.assistant_id,  # [!code highlight]
+                namespace=lambda rt: (
+                    rt.server_info.assistant_id,  # [!code highlight]
                 ),
             ),
         },
@@ -240,7 +240,7 @@ agent = create_deep_agent(
         default=StateBackend(),
         routes={
             "/memories/": StoreBackend(
-                namespace=lambda ctx: (ctx.runtime.server_info.user.identity,),  # [!code highlight]
+                namespace=lambda rt: (rt.server_info.user.identity,),  # [!code highlight]
             ),
         },
     ),
@@ -263,7 +263,7 @@ agent = create_deep_agent(
         default=StateBackend(),
         routes={
             "/memories/": StoreBackend(
-                namespace=lambda ctx: (ctx.runtime.context.org_id,),
+                namespace=lambda rt: (rt.context.org_id,),
             ),
         },
     ),
@@ -532,11 +532,11 @@ backend = CompositeBackend(
     routes={
         "/skills/": StoreBackend(
             rt,
-            namespace=lambda ctx: ("skills", ctx.runtime.server_info.user.identity),  # [!code highlight]
+            namespace=lambda rt: ("skills", rt.server_info.user.identity),  # [!code highlight]
         ),
         "/memories/": StoreBackend(
             rt,
-            namespace=lambda ctx: ("memories", ctx.runtime.server_info.user.identity),  # [!code highlight]
+            namespace=lambda rt: ("memories", rt.server_info.user.identity),  # [!code highlight]
         ),
     },
 )

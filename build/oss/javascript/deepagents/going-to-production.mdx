@@ -164,7 +164,7 @@ In Deep Agents, memory is stored as files in a virtual filesystem. By default, f
 
 
 <Note>
-The `ctx.runtime.serverInfo` and `ctx.runtime.executionInfo` namespace patterns shown below require `deepagents>=1.9.0`.
+The `rt.serverInfo` and `rt.executionInfo` namespace patterns shown below require `deepagents>=1.9.0`.
 </Note>
 
 
@@ -182,9 +182,9 @@ export const agent = createDeepAgent({
     new StateBackend(),
     {
       "/memories/": new StoreBackend({
-        namespace: (ctx) => [
-          ctx.runtime.serverInfo.assistantId,  // [!code highlight]
-          ctx.runtime.serverInfo.user.identity,  // [!code highlight]
+        namespace: (rt) => [
+          rt.serverInfo.assistantId,  // [!code highlight]
+          rt.serverInfo.user.identity,  // [!code highlight]
         ],
       }),
     },
@@ -212,7 +212,7 @@ export const agent = createDeepAgent({
     new StateBackend(),
     {
       "/memories/": new StoreBackend({
-        namespace: (ctx) => [ctx.runtime.serverInfo.assistantId],  // [!code highlight]
+        namespace: (rt) => [rt.serverInfo.assistantId],  // [!code highlight]
       }),
     },
   ),
@@ -234,7 +234,7 @@ export const agent = createDeepAgent({
     new StateBackend(),
     {
       "/memories/": new StoreBackend({
-        namespace: (ctx) => [ctx.runtime.serverInfo.user.identity],  // [!code highlight]
+        namespace: (rt) => [rt.serverInfo.user.identity],  // [!code highlight]
       }),
     },
   ),
@@ -256,7 +256,7 @@ export const agent = createDeepAgent({
     new StateBackend(),
     {
       "/memories/": new StoreBackend({
-        namespace: (ctx) => [ctx.runtime.context.orgId],
+        namespace: (rt) => [rt.context.orgId],
       }),
     },
   ),
@@ -528,10 +528,10 @@ const backend = new CompositeBackend(
   await DaytonaSandbox.fromId(sandbox.id),
   {
     "/skills/": new StoreBackend({
-      namespace: (ctx) => ["skills", ctx.runtime.serverInfo.user.identity],  // [!code highlight]
+      namespace: (rt) => ["skills", rt.serverInfo.user.identity],  // [!code highlight]
     }),
     "/memories/": new StoreBackend({
-      namespace: (ctx) => ["memories", ctx.runtime.serverInfo.user.identity],  // [!code highlight]
+      namespace: (rt) => ["memories", rt.serverInfo.user.identity],  // [!code highlight]
     }),
   },
 );
