@@ -69,3 +69,4 @@ You can override the default spend limit for individual agents or users to set a
 
 - Changes to spend limits may take a few minutes to propagate across all running agents.
 - Spend limits are checked at the start of each run. If a run begins while usage is under the limit, it will be allowed to complete even if the final cost exceeds the limit.
+- Spend calculations are based on traces. Deleting traces will affect reported usage and spend enforcement.
