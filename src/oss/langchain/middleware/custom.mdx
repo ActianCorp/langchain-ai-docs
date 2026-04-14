@@ -1186,9 +1186,13 @@ Use @[`SystemMessage.concat`] to preserve cache control metadata or structured c
 Select relevant tools at runtime to improve performance and accuracy. This section covers filtering pre-registered tools. For registering tools that are discovered at runtime (e.g., from MCP servers), see [Runtime tool registration](/oss/langchain/agents#dynamic-tools).
 
 **Benefits:**
-- **Shorter prompts** - Reduce complexity by exposing only relevant tools
-- **Better accuracy** - Models choose correctly from fewer options
-- **Permission control** - Dynamically filter tools based on user access
+- **Shorter prompts** — Reduce complexity by exposing only relevant tools
+- **Better accuracy** — Models choose correctly from fewer options
+- **Permission control** — Dynamically filter tools based on user access
+
+<Warning>
+Changing the tool list between calls invalidates the provider's prompt cache (tool definitions are part of the cached prefix), which increases latency and cost. The model may also attempt to call tools that were available in earlier turns but have since been removed. See [Tradeoffs](/oss/langchain/agents#tradeoffs) for mitigation strategies.
+</Warning>
 
 :::python
 

@@ -720,6 +720,17 @@ There are two approaches depending on whether tools are known ahead of time:
 
 Understanding how tools are registered and executed helps avoid common pitfalls when working with dynamic tools.
 
+##### Tradeoffs
+
+Dynamic tool selection improves accuracy and reduces prompt size, but introduces tradeoffs you should be aware of:
+
+- **Model may call removed tools.** If a tool was available in earlier turns but is removed in a later turn, the model may still attempt to call it based on conversation history. Handle this with [tool error handling](#tool-error-handling) middleware, or include a brief system message explaining which tools are currently available.
+- **Changing tools invalidates the prompt cache.** Most providers (OpenAI, Anthropic, Google) cache the prompt prefix — including tool definitions — to reduce latency and cost on subsequent calls. When the tool list changes between calls, the cached prefix no longer matches and the provider must reprocess the full prompt. This is an unavoidable cost of dynamic tool selection. To minimize cache invalidation:
+  - Keep a stable set of "core" tools that are always present and place them first in the list.
+  - Append or remove tools at the end of the list rather than reordering, since prefix-based caches match from the beginning.
+  - Prefer filtering over frequent additions/removals when possible.
+- **Fewer tools generally means better accuracy.** Models perform better with a focused set of relevant tools. If you have many tools, dynamic selection can significantly improve tool-calling accuracy by reducing the number of options the model must choose from.
+
 ##### Tool registration vs. tool exposure
 
 `create_agent` uses [LangGraph](/oss/langgraph/overview) under the hood. When you call `create_agent(tools=[...])`, two things happen:
