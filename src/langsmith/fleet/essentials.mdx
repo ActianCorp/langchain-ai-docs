@@ -7,7 +7,7 @@ LangSmith Fleet essentials are the core features that make up the foundation of 
 
 ## Agent identity
 
-Agent identity controls whose [credentials](/langsmith/fleet/setup) the agent uses when it interacts with apps and services.
+Agent identity controls whose [credentials](/langsmith/fleet/workspace-admin) the agent uses when it interacts with apps and services.
 
 See [Agent identity](/langsmith/fleet/agent-identity) for more information.
 
@@ -100,7 +100,7 @@ Agents remember important information from previous conversations and can update
 - **What stays the same**: Agents can't change their name, description, or the channels that start them.
 
 <Note>
-By default, agents require approval before saving to the memories folder. You can disable this in the agent's settings. For agents that run on automated schedules (such as [schedules](/langsmith/fleet/channels#add-a-schedule)), disable the approval requirement so the agent can persist information without manual intervention. See [Update memory](/langsmith/fleet/manage-agent-settings#update-memory) for instructions.
+By default, agents require approval before saving to the memories folder. You can disable this in the agent's settings. For agents that run on automated schedules (such as [schedules](/langsmith/fleet/schedules#add-a-schedule)), disable the approval requirement so the agent can persist information without manual intervention. See [Update memory](/langsmith/fleet/manage-agent-settings#update-memory) for instructions.
 </Note>
 
 For more information, see [How we built Agent Builder's memory system](https://www.langchain.com/conceptual-guides/how-we-built-agent-builders-memory).
@@ -173,7 +173,7 @@ Fleet traces all agent runs and stores them in LangSmith. LLM providers do not r
 
 ## Next steps
 
-- [Set up your workspace](/langsmith/fleet/setup)
+- [Set up your workspace](/langsmith/fleet/workspace-admin)
 - [Connect apps and services](/langsmith/fleet/tools)
 - [Use remote servers for tools](/langsmith/fleet/remote-mcp-servers)
 - [Choose between workspace and private agents](/langsmith/fleet/manage-agent-settings)
