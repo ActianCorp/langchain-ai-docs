@@ -716,6 +716,99 @@ There are two approaches depending on whether tools are known ahead of time:
   </Tab>
 </Tabs>
 
+#### How dynamic tools work
+
+Understanding how tools are registered and executed helps avoid common pitfalls when working with dynamic tools.
+
+##### Tool registration vs. tool exposure
+
+`create_agent` uses [LangGraph](/oss/langgraph/overview) under the hood. When you call `create_agent(tools=[...])`, two things happen:
+
+1. **Tool schemas are bound to the model** — the model learns what tools are available and how to call them.
+2. **Tools are registered for execution** — a `ToolNode` is created with an internal mapping of tool names to tool implementations. This mapping is built once at initialization.
+
+Middleware can modify **which tools the model sees** (step 1) on each request, but the `ToolNode` executor (step 2) only knows about tools that were registered at creation time. This is why runtime-registered tools require `wrap_tool_call` — the executor needs to be told how to run tools it doesn't know about.
+
+##### Why `wrap_tool_call` is required for runtime-registered tools
+
+If middleware adds a tool via `wrap_model_call` that wasn't passed to `create_agent(tools=[...])`, the model may call it, but the `ToolNode` won't know how to execute it. This produces an error like:
+
+```text
+ValueError: Middleware returned unknown tool names: ['my_dynamic_tool']
+
+Available client-side tools: ['search', 'get_weather']
+
+To fix this issue:
+1. Ensure the tools are passed to create_agent() via the 'tools' parameter
+2. If using custom middleware with tools, ensure they're registered via middleware.tools attribute
+3. Verify that tool names in ModelRequest.tools match the actual tool.name values
+```
+
+To fix this, implement `wrap_tool_call` in your middleware to handle execution of the dynamically added tools, as shown in the [Runtime tool registration](#runtime-tool-registration) example above.
+
+##### Create an agent with no static tools
+
+You can create an agent with an empty tool list and add all tools dynamically via middleware. Both `wrap_model_call` and `wrap_tool_call` are required:
+
+:::python
+
+```python
+from langchain.agents import create_agent
+from langchain.agents.middleware import AgentMiddleware, ModelRequest, ToolCallRequest
+
+class AllDynamicToolsMiddleware(AgentMiddleware):
+    def wrap_model_call(self, request: ModelRequest, handler):
+        dynamic_tools = fetch_tools_for_user(request.runtime)
+        return handler(request.override(tools=dynamic_tools))
+
+    def wrap_tool_call(self, request: ToolCallRequest, handler):
+        dynamic_tools = fetch_tools_for_user(request.runtime)
+        tool_map = {t.name: t for t in dynamic_tools}
+        tool = tool_map.get(request.tool_call["name"])
+        if tool:
+            return handler(request.override(tool=tool))
+        return handler(request)
+
+agent = create_agent(
+    model="gpt-4.1",
+    tools=[],
+    middleware=[AllDynamicToolsMiddleware()],
+)
+```
+
+:::
+
+:::js
+
+```typescript
+import { createAgent, createMiddleware } from "langchain";
+
+const allDynamicToolsMiddleware = createMiddleware({
+  name: "AllDynamicTools",
+  wrapModelCall: (request, handler) => {
+    const dynamicTools = fetchToolsForUser(request.runtime);
+    return handler({ ...request, tools: dynamicTools });
+  },
+  wrapToolCall: (request, handler) => {
+    const dynamicTools = fetchToolsForUser(request.runtime);
+    const toolMap = Object.fromEntries(dynamicTools.map((t: any) => [t.name, t]));
+    const tool = toolMap[request.toolCall.name];
+    if (tool) {
+      return handler({ ...request, tool });
+    }
+    return handler(request);
+  },
+});
+
+const agent = createAgent({
+  model: "gpt-4.1",
+  tools: [],
+  middleware: [allDynamicToolsMiddleware],
+});
+```
+
+:::
+
 <Tip>
 To learn more about tools, see [Tools](/oss/langchain/tools).
 </Tip>
