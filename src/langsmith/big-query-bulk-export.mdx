@@ -68,7 +68,7 @@ LangSmith connects to GCS using the S3-compatible XML API, which requires HMAC k
 Generate HMAC keys for your service account:
 
 ```bash
-gcloud storage hmac keys create \
+gcloud storage hmac create \
   langsmith-bulk-export@YOUR_PROJECT.iam.gserviceaccount.com
 ```
 
@@ -133,7 +133,7 @@ curl --request POST \
     "start_time": "2024-01-01T00:00:00Z",
     "end_time": "2024-02-01T00:00:00Z",
     "format_version": "v2_beta",
-    "compression": "SNAPPY"
+    "compression": "snappy"
   }'
 ```
 
@@ -167,110 +167,92 @@ gs://YOUR_BUCKET_NAME/YOUR_PREFIX/export_id=<uuid>/tenant_id=<uuid>/session_id=<
 
 The partition columns in the path (`export_id`, `tenant_id`, `session_id`, `resource`, `year`, `month`, `day`) are available as queryable columns in BigQuery when Hive partition detection is enabled.
 
-## 6. Create a BigQuery external table
+## 6. Load data into BigQuery
+
+BigQuery offers two ways to access your exported data. Choose based on your needs:
+
+- **External table:** data stays in GCS and BigQuery queries it in place. No storage costs in BigQuery, but query performance is slower than native storage.
+- **Native table:** data is copied into BigQuery storage. Faster queries and full support for BigQuery features, but incurs BigQuery storage costs.
 
 ### Grant BigQuery access to GCS
 
-BigQuery needs read access to your bucket. Find your BigQuery service account in **GCP Console → BigQuery → Project Settings**, then grant it access:
+<Tabs>
+  <Tab title="External table">
 
-```bash
-gcloud storage buckets add-iam-policy-binding gs://YOUR_BUCKET_NAME \
-  --member="serviceAccount:YOUR_BQ_SERVICE_ACCOUNT@bigquery-encryption.iam.gserviceaccount.com" \
-  --role="roles/storage.objectViewer"
-```
+    Both approaches require granting the BigQuery service account read access to your GCS bucket first.
 
-### Create the external table
+    To query and external table in a cloud storage bucket you must have access to both the external table and the external data source.
 
-Run the following in the BigQuery console or with `bq`:
+    Ensure you have the following predefined roles:
 
-```sql
-CREATE OR REPLACE EXTERNAL TABLE `YOUR_PROJECT.YOUR_DATASET.langsmith_runs`
-WITH PARTITION COLUMNS (
-  export_id STRING,
-  tenant_id STRING,
-  session_id STRING,
-  resource  STRING,
-  year      INT64,
-  month     INT64,
-  day       INT64
-)
-OPTIONS (
-  uris = ['gs://YOUR_BUCKET_NAME/YOUR_PREFIX/export_id=*'],
-  format = 'PARQUET',
-  hive_partition_uri_prefix = 'gs://YOUR_BUCKET_NAME/YOUR_PREFIX'
-);
-```
+    - BigQuery Data Viewer (`roles/bigquery.dataViewer`)
+    - BigQuery User (`roles/bigquery.user`)
+    - Storage Object Viewer (`roles/storage.objectViewer`)
 
-<Note>
-**Why `export_id=*` instead of `*`**
+    Or, the following permissions:
 
-LangSmith writes a temporary `tmp/` folder to your prefix during destination creation and credential rotation (see [Temporary validation file](#temporary-validation-file)). Using `export_id=*` in the URI scopes BigQuery to only the Hive-partitioned export directories, avoiding any stray files under `tmp/`.
+    - `bigquery.tables.getData`
+    - `bigquery.tables.get`
+    - `bigquery.jobs.create`
+    - `storage.buckets.get`
+    - `storage.objects.get`
 
-If you have confirmed that your prefix contains only export data (e.g. you manually deleted the `tmp/` folder), you can use `*` instead.
-</Note>
+  </Tab>
+  <Tab title="Native table">
+  </Tab>
+</Tabs>
 
-BigQuery will detect partition column names and types automatically from the path structure. You can also use `WITH PARTITION COLUMNS` without explicit column definitions to let BigQuery infer them:
+### Create the table
 
-```sql
-CREATE OR REPLACE EXTERNAL TABLE `YOUR_PROJECT.YOUR_DATASET.langsmith_runs`
-WITH PARTITION COLUMNS
-OPTIONS (
-  uris = ['gs://YOUR_BUCKET_NAME/YOUR_PREFIX/export_id=*'],
-  format = 'PARQUET',
-  hive_partition_uri_prefix = 'gs://YOUR_BUCKET_NAME/YOUR_PREFIX'
-);
-```
+<Tabs>
+  <Tab title="External table">
+    An external table queries data directly from GCS without copying it into BigQuery.
 
-## 7. Query your data
+    1. In the BigQuery console, expand your project and dataset in the **Explorer** pane.
+    2. Click the dataset's **Actions** menu (three dots) and select **Create table**.
+    3. Under **Source**:
+       - Set **Create table from** to **Google Cloud Storage**.
+       - Set the file path to `gs://YOUR_BUCKET_NAME/YOUR_PREFIX/export_id=*`. Using `export_id=*` scopes BigQuery to Hive-partitioned export directories and excludes the `tmp/` folder that LangSmith writes during destination validation (see [Temporary validation file](#temporary-validation-file)).
+       - Set **File format** to **Parquet**.
+    4. Check **Source data partitioning**, then:
+       - Set **Source URI prefix** to `gs://YOUR_BUCKET_NAME/YOUR_PREFIX`.
+       - Set **Partition inference mode** to **Automatically infer types**.
+    5. Under **Destination**:
+       - Select your project and dataset.
+       - Enter a table name, for example `langsmith_runs`.
+       - Set **Table type** to **External table**.
+    6. Under **Schema**, enable **Auto-detect**.
+    7. Click **Create table**.
 
-Once your external table is set up, you can query it directly in BigQuery. For the full list of available columns, see [Exportable fields](/langsmith/data-export#exportable-fields).
+    The partition path columns (`export_id`, `tenant_id`, `session_id`, `resource`, `year`, `month`, `day`) are available as queryable columns. Filter on `year`, `month`, or `day` in your queries to enable partition pruning.
+  </Tab>
+  <Tab title="Native table">
+    A native table transfers the Parquet data into BigQuery storage for full query performance.
 
-<Tip>
-Always filter on `year`, `month`, and/or `day` in your `WHERE` clause to enable partition pruning. Without these filters, BigQuery scans all files in the prefix.
-</Tip>
+    1. Go to the [Data Transfer page](https://console.cloud.google.com/bigquery/transfers) in the Google Cloud console and select **+ Create transfer**.
+    2. For **Source type**, select **Google Cloud Storage**.
+    3. Enter a **Transfer name**. You'll have access to edit the transfer at a point if necessary.
+    4. Select a **Schedule option**. If you do not want to repeat the export, you can select **On demand** and trigger the export manually.
 
-**Daily LLM cost and token usage:**
+    1. In the BigQuery console, expand your project and dataset in the **Explorer** pane.
+    2. Click the dataset's **Actions** menu (three dots) and select **Create table**.
+    3. Under **Source**:
+       - Set **Create table from** to **Google Cloud Storage**.
+       - Set the file path to `gs://YOUR_BUCKET_NAME/YOUR_PREFIX/export_id=*`. Using `export_id=*` excludes the `tmp/` folder that LangSmith writes during destination validation (see [Temporary validation file](#temporary-validation-file)).
+       - Set **File format** to **Parquet**.
+    4. Check **Source data partitioning**, then:
+       - Set **Source URI prefix** to `gs://YOUR_BUCKET_NAME/YOUR_PREFIX`.
+       - Set **Partition inference mode** to **Automatically infer types**.
+    5. Under **Destination**:
+       - Select your project and dataset.
+       - Enter a table name, for example `langsmith_runs`.
+       - Set **Table type** to **Native table**.
+    6. Under **Advanced options**, set **Write preference** to **Write if empty** for a new table.
+    7. Click **Create table**.
 
-```sql
-SELECT
-  DATE(start_time) AS date,
-  SUM(total_cost)   AS total_cost_usd,
-  SUM(total_tokens) AS total_tokens,
-  COUNT(*)          AS run_count
-FROM `YOUR_PROJECT.YOUR_DATASET.langsmith_runs`
-WHERE year = 2024
-  AND run_type = 'llm'
-GROUP BY 1
-ORDER BY 1;
-```
-
-**Error rate by run name:**
-
-```sql
-SELECT
-  name,
-  COUNTIF(status = 'error')                          AS errors,
-  COUNT(*)                                            AS total,
-  ROUND(COUNTIF(status = 'error') / COUNT(*) * 100, 2) AS error_rate_pct
-FROM `YOUR_PROJECT.YOUR_DATASET.langsmith_runs`
-WHERE year = 2024
-GROUP BY name
-HAVING total > 100
-ORDER BY error_rate_pct DESC;
-```
-
-**p50 and p95 latency for LLM runs:**
-
-```sql
-SELECT
-  name,
-  APPROX_QUANTILES(TIMESTAMP_DIFF(end_time, start_time, MILLISECOND), 100)[OFFSET(50)] AS p50_ms,
-  APPROX_QUANTILES(TIMESTAMP_DIFF(end_time, start_time, MILLISECOND), 100)[OFFSET(95)] AS p95_ms
-FROM `YOUR_PROJECT.YOUR_DATASET.langsmith_runs`
-WHERE session_id = 'YOUR_PROJECT_ID'
-  AND run_type = 'llm'
-GROUP BY name;
-```
+    BigQuery runs a load job to copy the data. The Hive partition columns appear as regular columns in the table. For the full list of available data columns, see [Exportable fields](/langsmith/data-export#exportable-fields).
+  </Tab>
+</Tabs>
 
 ## Credential rotation
 
@@ -308,7 +290,7 @@ For full details, see [Rotate destination credentials](/langsmith/data-export-de
 | `400 Key ID you provided does not exist` | HMAC access ID is invalid | Regenerate HMAC keys in GCP |
 | `400 Invalid endpoint` | Endpoint URL is malformed | Use exactly `https://storage.googleapis.com` |
 | BigQuery table shows no rows | Export not yet complete | Check export status with `GET /api/v1/bulk-exports/{export_id}` |
-| BigQuery partition pruning not working | Incorrect `hive_partition_uri_prefix` | Ensure the prefix ends at the directory level before the first partition key, e.g. `gs://BUCKET/PREFIX` |
-| BigQuery picks up `tmp/` files | Broad URI glob | Use `export_id=*` in your `uris` value instead of `*` |
+| BigQuery partition pruning not working | Incorrect source URI prefix | Ensure the source URI prefix ends before the first partition key, e.g. `gs://BUCKET/PREFIX` |
+| BigQuery picks up `tmp/` files | Broad file path glob | Use `export_id=*` in your file path instead of `*` |
 
 For additional error codes and export status details, see [Monitor and troubleshoot bulk exports](/langsmith/data-export-monitor).
