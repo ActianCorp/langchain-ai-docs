@@ -905,7 +905,13 @@
                 "langsmith/smith-java-sdk",
                 "langsmith/langgraph-python-sdk",
                 "langsmith/langgraph-js-ts-sdk",
-                "langsmith/smith-api-ref",
+                {
+                  "group": "LangSmith API",
+                  "openapi": {
+                    "source": "https://api.smith.langchain.com/openapi.json",
+                    "directory": "langsmith/smith-api"
+                  }
+                },
                 {
                   "group": "LangSmith Deployment",
                   "pages": [
@@ -2309,7 +2315,7 @@
     },
     {
       "source": "/langsmith/api-ref",
-      "destination": "/langsmith/smith-api-ref"
+      "destination": "/langsmith/smith-api"
     },
     {
       "source": "/langsmith/js-ts-sdk",
