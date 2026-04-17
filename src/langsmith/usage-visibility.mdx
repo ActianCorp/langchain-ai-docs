@@ -1,0 +1,118 @@
+---
+title: Usage visibility
+sidebarTitle: Usage visibility
+description: What usage data is available in LangSmith, what each metric means, and what differs for self-hosted deployments.
+---
+
+LangSmith provides several views into your [organization's](/langsmith/administration-overview) usage, depending on your [plan](/langsmith/pricing-plans) and [deployment type](/langsmith/platform-setup). This page explains what data is available, what each metric means, and what limitations apply to [self-hosted](/langsmith/self-hosted) deployments.
+
+## Usage views available
+
+| View | Where to find it | Who can see it | Plan availability |
+|------|-----------------|----------------|------------------|
+| [Usage graph](#usage-graph) | Settings → Billing and Usage → Usage Graph | All org members (`organization:read`) | All plans (Cloud) |
+| [Invoices](#invoices) | Settings → Billing and Usage → Invoices | All org members (`organization:read`) | Paid Cloud plans |
+| [Contract burndown](#contract-burndown) | Settings → Usage Configuration → Contract Usage | Org Admin, Org Operator | Enterprise (Cloud) |
+| [Granular usage](#granular-usage) | Settings → Billing and Usage → Granular Usage | All org members (`organization:read`) | All plans (Cloud); [self-hosted with feature flag](#self-hosted-limitations) |
+
+## Usage graph
+
+The usage graph shows aggregate trace consumption for your organization, broken down by workspace. It covers the current billing period and does not show spend — for spend, refer to the invoice.
+
+Navigate to **Settings** → **Billing and Usage** → **Usage Graph**.
+
+### Billable metrics
+
+| Metric | What it counts |
+|--------|----------------|
+| **LangSmith Traces (Base Charge)** | Every trace sent to LangSmith during the billing period, regardless of data retention tier |
+| **LangSmith Traces (Extended Data Retention Upgrades)** | Traces upgraded to extended retention (400 days by default). These are charged in addition to the base charge |
+| **LangSmith Deployment Runs** | End-to-end invocations of deployed LangGraph agents |
+
+<Note>
+The usage graph uses the term `tenant_id` interchangeably with workspace ID.
+</Note>
+
+## Invoices
+
+The **Invoices** tab shows a draft invoice for the current billing period alongside finalized invoices from previous periods. The draft reflects usage-to-date and is updated continuously.
+
+Navigate to **Settings** → **Billing and Usage** → **Invoices**.
+
+## Contract burndown
+
+Enterprise customers with prepaid commitments can view how much of their contract has been consumed.
+
+Navigate to **Settings** → **Usage Configuration** → **Contract Usage**.
+
+This view shows:
+
+- **Usage summary**: Total usage, total credits, and any overages (usage beyond the committed amount)
+- **Commitment progress bars**: Per-commitment visualization showing amount used vs. remaining
+- **Monthly usage chart**: Month-by-month usage within the contract period
+- **Product rates**: Your contracted rates by product
+
+<Note>
+Contract burndown requires the `organization:manage` permission and is only available to Enterprise customers with prepaid commitments.
+</Note>
+
+## Granular usage
+
+Granular usage gives you trace counts broken down by a dimension you choose — workspace, project, user, or API key — over a time range you select. This is useful for internal chargebacks, identifying high-usage teams, or auditing trace activity.
+
+Navigate to **Settings** → **Billing and Usage** → **Granular Usage**, or use the [granular usage API](/langsmith/granular-usage).
+
+### What "traces" means here
+
+The granular usage view counts **traces** — root-level runs and all their child spans counted as a single unit. This is the same unit used for billing. It does not count individual spans, tokens, or model calls separately.
+
+### When usage is recorded
+
+Granular usage records traces by **insertion time** — when the trace was received and stored by LangSmith — not by when it ran in your application. In practice this difference is usually negligible, but traces sent with significant delay (e.g., buffered SDK uploads) may appear in a later time bucket than expected.
+
+See [Granular billable usage](/langsmith/granular-usage) for grouping options, time bucket sizes, and API reference.
+
+## Self-hosted limitations
+
+Self-hosted LangSmith deployments have a different set of usage views available compared to Cloud, due to differences in billing infrastructure.
+
+### What is available
+
+| Feature | Self-hosted availability |
+|---------|--------------------------|
+| Granular usage (trace attribution) | Available with feature flags or version ≥ 0.13.12 |
+| Usage graph (aggregate traces) | Available when Beacon phone-home is enabled |
+| Contract burndown | Available when Beacon phone-home is enabled |
+| Invoices and payment management | Not available (billing is handled outside LangSmith) |
+
+### Granular usage on self-hosted
+
+Granular usage is available on self-hosted deployments but requires explicit opt-in:
+
+- On **LangSmith 0.13.12 and later**, granular usage collection is enabled by default.
+- On **earlier versions**, enable it by setting both of the following environment variables:
+
+```env
+DEFAULT_ORG_FEATURE_ENABLE_GRANULAR_USAGE_REPORTING=true
+GRANULAR_USAGE_TABLE_ENABLED=true
+```
+
+<Warning>
+Data collection begins from the moment the feature is enabled. There is no backfill of historical usage data prior to enabling it. Plan accordingly when choosing when to enable this feature.
+</Warning>
+
+### Aggregate usage on self-hosted
+
+The organization-level usage graph and contract burndown rely on LangSmith's Beacon service, which reports usage externally. Whether this is available depends on your deployment configuration:
+
+- If your license key begins with `lcl_`, Beacon phone-home is automatically enabled, and aggregate usage and contract burndown are available.
+- If your deployment runs fully offline (no phone-home), the organization-level usage graph and contract burndown are not available. Granular usage (stored locally in Postgres) is still available.
+
+To verify your configuration, check whether `PHONE_HOME_ENABLED` or `PHONE_HOME_USAGE_REPORTING_ENABLED` are set in your deployment environment.
+
+## Related resources
+
+- [Granular billable usage API reference](/langsmith/granular-usage)
+- [Manage billing](/langsmith/billing)
+- [Data retention and usage limits](/langsmith/administration-overview#data-retention)
+- [Organization and workspace operations](/langsmith/organization-workspace-operations)
