@@ -2318,6 +2318,10 @@
       "destination": "/langsmith/smith-api"
     },
     {
+      "source": "/langsmith/smith-api-ref",
+      "destination": "/langsmith/smith-api"
+    },
+    {
       "source": "/langsmith/js-ts-sdk",
       "destination": "/langsmith/smith-js-ts-sdk"
     },
