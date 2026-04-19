@@ -107,8 +107,8 @@ from langchain.agents import create_agent
 from langchain.agents.middleware import wrap_model_call, ModelRequest, ModelResponse
 
 
-basic_model = ChatOpenAI(model="gpt-4.1-mini")
-advanced_model = ChatOpenAI(model="gpt-4.1")
+basic_model = ChatOpenAI(model="gpt-5.4-mini")
+advanced_model = ChatOpenAI(model="gpt-5.4")
 
 @wrap_model_call
 def dynamic_model_selection(request: ModelRequest, handler) -> ModelResponse:
@@ -230,7 +230,7 @@ There are two approaches depending on whether tools are known ahead of time:
             return handler(request)
 
         agent = create_agent(
-            model="gpt-4.1",
+            model="gpt-5.4",
             tools=[public_search, private_search, advanced_search],
             middleware=[state_based_tools]
         )
@@ -276,7 +276,7 @@ There are two approaches depending on whether tools are known ahead of time:
             return handler(request)
 
         agent = create_agent(
-            model="gpt-4.1",
+            model="gpt-5.4",
             tools=[search_tool, analysis_tool, export_tool],
             middleware=[store_based_tools],
             context_schema=Context,
@@ -330,7 +330,7 @@ There are two approaches depending on whether tools are known ahead of time:
             return handler(request)
 
         agent = create_agent(
-            model="gpt-4.1",
+            model="gpt-5.4",
             tools=[read_data, write_data, delete_data],
             middleware=[context_based_tools],
             context_schema=Context
@@ -442,7 +442,7 @@ def handle_tool_errors(request, handler):
         )
 
 agent = create_agent(
-    model="gpt-4.1",
+    model="gpt-5.4",
     tools=[search, get_weather],
     middleware=[handle_tool_errors]
 )
@@ -603,7 +603,7 @@ def user_role_prompt(request: ModelRequest) -> str:
     return base_prompt
 
 agent = create_agent(
-    model="gpt-4.1",
+    model="gpt-5.4",
     tools=[web_search],
     middleware=[user_role_prompt],
     context_schema=Context
@@ -685,7 +685,7 @@ class ContactInfo(BaseModel):
     phone: str
 
 agent = create_agent(
-    model="gpt-4.1-mini",
+    model="gpt-5.4-mini",
     tools=[search_tool],
     response_format=ToolStrategy(ContactInfo)
 )
@@ -706,7 +706,7 @@ result["structured_response"]
 from langchain.agents.structured_output import ProviderStrategy
 
 agent = create_agent(
-    model="gpt-4.1",
+    model="gpt-5.4",
     response_format=ProviderStrategy(ContactInfo)
 )
 ```

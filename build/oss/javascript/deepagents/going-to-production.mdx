@@ -634,7 +634,7 @@ const agent = createAgent({
     // Retry model calls on rate limits, timeouts, and 5xx errors
     modelRetryMiddleware({ maxRetries: 3, backoffFactor: 2.0, initialDelayMs: 1000 }),
     // If the primary model is fully down, fall back to an alternative
-    modelFallbackMiddleware("gpt-4.1"),
+    modelFallbackMiddleware("gpt-5.4"),
     // Retry specific tools that hit external APIs (not all tools)
     toolRetryMiddleware({
       maxRetries: 2,
