@@ -207,7 +207,7 @@
                       "group": "Billing & usage",
                       "pages": [
                         "langsmith/billing",
-                        "langsmith/usage-visibility",
+                        "langsmith/view-usage",
                         "langsmith/granular-usage"
                       ]
                     },

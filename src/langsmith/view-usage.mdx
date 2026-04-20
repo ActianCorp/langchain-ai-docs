@@ -1,6 +1,5 @@
 ---
-title: Usage visibility
-sidebarTitle: Usage visibility
+title: View usage
 description: What usage data is available in LangSmith, what each metric means, and what differs for self-hosted deployments.
 ---
 
@@ -17,7 +16,7 @@ LangSmith provides several views into your [organization's](/langsmith/administr
 
 ## Usage graph
 
-The usage graph shows aggregate trace consumption for your organization, broken down by workspace. It covers the current billing period and does not show spend — for spend, refer to the invoice.
+The usage graph shows aggregate trace consumption for your organization, broken down by workspace. It covers the current billing period and does not show spend—for spend, refer to the invoice.
 
 Navigate to **Settings** → **Billing and Usage** → **Usage Graph**.
 
@@ -25,11 +24,11 @@ Navigate to **Settings** → **Billing and Usage** → **Usage Graph**.
 
 | Metric | What it counts |
 |--------|----------------|
-| **LangSmith Traces (Base Charge)** | Every trace sent to LangSmith during the billing period, regardless of data retention tier |
-| **LangSmith Traces (Extended Data Retention Upgrades)** | Traces upgraded to extended retention (400 days by default, [customizable for Enterprise customers](/langsmith/data-purging-compliance#customize-extended-retention-policy)). These are charged in addition to the base charge |
-| **LangSmith Deployment Runs** | End-to-end invocations of deployed LangGraph agents. See [LangSmith Deployment billing](/langsmith/billing#langsmith-deployment-billing) for pricing details |
+| **LangSmith Traces (Base Charge)** | Every trace sent to LangSmith during the billing period, regardless of data retention tier. |
+| **LangSmith Traces (Extended Data Retention Upgrades)** | Traces upgraded to extended retention (400 days by default, [customizable for Enterprise customers](/langsmith/data-purging-compliance#customize-extended-retention-policy)). These are charged in addition to the base charge. |
+| **LangSmith Deployment Runs** | End-to-end invocations of deployed LangGraph agents. See [LangSmith Deployment billing](/langsmith/billing#langsmith-deployment-billing) for pricing details. |
 
-For more details on trace retention tiers, see [Data retention](/langsmith/administration-overview#data-retention).
+For more details on trace retention tiers, refer to [Data retention](/langsmith/administration-overview#data-retention).
 
 <Note>
 The usage graph uses the term `tenant_id` interchangeably with workspace ID.
@@ -49,7 +48,7 @@ This view shows:
 - **Product rates**: Table of your entitled products and their pricing.
 
 <Note>
-Contract burndown requires the `organization:manage` permission and is only available to Enterprise customers with prepaid commitments.
+Contract burndown requires the [`organization:manage` permission](/langsmith/organization-workspace-operations) and is only available to Enterprise customers with prepaid commitments.
 </Note>
 
 ## Invoices
@@ -58,30 +57,28 @@ Navigate to **Settings** → **Billing and Usage** → **Invoices** to see how y
 
 ## Granular usage
 
-Granular usage gives you trace counts broken down by a dimension you choose — workspace, project, user, or API key — over a time range you select. This is useful for internal chargebacks, identifying high-usage teams, or auditing trace activity.
+Granular usage gives you trace counts broken down by a dimension you choose (workspace, project, user, or API key) over a time range you select. This is useful for internal chargebacks, identifying high-usage teams, or auditing trace activity.
 
 Navigate to **Settings** → **Billing and Usage** → **Granular Usage**, or use the [granular usage API](/langsmith/granular-usage).
 
 ### What "traces" means here
 
-The granular usage view counts **traces** — root-level runs and all their child spans counted as a single unit. This is the same unit used for billing. It does not count individual spans, tokens, or model calls separately.
+The granular usage view counts **traces**: root-level runs and all their child spans counted as a single unit. This is the same unit used for [billing](/langsmith/billing). It does not count individual spans, tokens, or model calls separately.
 
 ### When usage is recorded
 
-Granular usage records traces by **insertion time** — when the trace was received and stored by LangSmith — not by when it ran in your application. In practice this difference is usually negligible, but traces sent with significant delay (e.g., buffered SDK uploads) may appear in a later time bucket than expected.
+Granular usage records traces by **insertion time**—when the trace was received and stored by LangSmith—not by when it ran in your application. In practice this difference is usually negligible, but traces sent with significant delay (e.g., buffered SDK uploads) may appear in a later time bucket than expected.
 
-See [Granular billable usage](/langsmith/granular-usage) for grouping options, time bucket sizes, and API reference.
+For grouping options, time bucket sizes, and API reference, refer to [Granular billable usage](/langsmith/granular-usage).
 
 ## Self-hosted limitations
 
-Self-hosted LangSmith deployments have a different set of usage views available compared to Cloud, due to differences in billing infrastructure.
+[Self-hosted](/langsmith/self-hosted) LangSmith [deployments](/langsmith/deployment) have a different set of usage views available compared to [Cloud](/langsmith/cloud), due to differences in billing infrastructure.
 
-### What is available
-
-| Feature | Self-hosted availability |
+| **Feature** | **Self-hosted availability** |
 |---------|--------------------------|
 | Granular usage (trace attribution) | Available with feature flags or version ≥ 0.13.12 |
-| Usage graph (aggregate traces) | Available when Beacon phone-home is enabled |
+| Usage graph (aggregate traces) | Available on Helm chart 0.9.5 and later |
 | Contract burndown | Available when Beacon phone-home is enabled |
 | Invoices and payment management | Not available (billing is handled outside LangSmith) |
 
@@ -92,10 +89,10 @@ Granular usage is available on self-hosted deployments but requires explicit opt
 - On **LangSmith 0.13.12 and later**, granular usage collection is enabled by default.
 - On **earlier versions**, enable it by setting both of the following environment variables:
 
-```env
-DEFAULT_ORG_FEATURE_ENABLE_GRANULAR_USAGE_REPORTING=true
-GRANULAR_USAGE_TABLE_ENABLED=true
-```
+    ```env
+    DEFAULT_ORG_FEATURE_ENABLE_GRANULAR_USAGE_REPORTING=true
+    GRANULAR_USAGE_TABLE_ENABLED=true
+    ```
 
 <Warning>
 Data collection begins from the moment the feature is enabled. There is no backfill of historical usage data prior to enabling it. Plan accordingly when choosing when to enable this feature.
@@ -103,12 +100,14 @@ Data collection begins from the moment the feature is enabled. There is no backf
 
 ### Aggregate usage on self-hosted
 
-The organization-level usage graph and contract burndown rely on LangSmith's Beacon service, which reports usage externally. Whether this is available depends on your deployment configuration:
+The usage graph is available on self-hosted deployments running Helm chart 0.9.5 or later. LangSmith automatically generates and syncs organization usage charts, available under **Settings** → **Usage and billing** → **Usage graph**:
 
-- If your license key begins with `lcl_`, Beacon phone-home is automatically enabled, and aggregate usage and contract burndown are available.
-- If your deployment runs fully offline (no phone-home), the organization-level usage graph and contract burndown are not available. Granular usage (stored locally in Postgres) is still available.
+- **Usage by Workspace**: trace counts (root runs) per workspace
+- **Organization Usage**: total trace counts across the organization
 
-To verify your configuration, check whether `PHONE_HOME_ENABLED` or `PHONE_HOME_USAGE_REPORTING_ENABLED` are set in your deployment environment.
+Charts refresh every 5 minutes to include new workspaces and are not editable.
+
+For programmatic access to trace counts, see [View trace counts across your organization](/langsmith/self-host-organization-charts).
 
 ## Related resources
 
