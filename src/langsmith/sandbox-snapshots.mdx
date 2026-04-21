@@ -55,6 +55,8 @@ Pass registry credentials (or a pre-registered `registry_id` / `registryId`) to 
 <CodeGroup>
 
 ```python Python
+import os
+
 snapshot = client.create_snapshot(
     "internal-python",
     docker_image="registry.example.com/internal/python:3.12",
@@ -84,38 +86,65 @@ const snapshot = await client.createSnapshot(
 
 ## Capture a snapshot from a running sandbox
 
-Start a sandbox from an existing snapshot, install packages or prepare data, then capture the result as a new snapshot.
+Start a sandbox from an existing snapshot, install packages or prepare data, then capture the result as a new snapshot. The returned snapshot has its `source_sandbox_id` set to the sandbox it was captured from, and can be used as the `snapshot_id` for any later `create_sandbox` call.
 
 <CodeGroup>
 
 ```python Python
 sb = client.create_sandbox(snapshot_id=base_snapshot_id, name="setup-box")
-sb.run("pip install numpy pandas scikit-learn", timeout=120)
+sb.run("pip install numpy pandas scikit-learn", timeout=180)
+sb.write("/opt/config.yaml", "model: gpt-5\n")
 
 # Capture the current filesystem as a new snapshot
 snapshot = sb.capture_snapshot("ml-ready")
+print(snapshot.id, snapshot.source_sandbox_id)
 
 sb.delete()
 
 # Boot fresh sandboxes pre-loaded with those dependencies
 with client.sandbox(snapshot_id=snapshot.id) as sb:
     sb.run("python -c 'import numpy; print(numpy.__version__)'")
+    assert sb.read("/opt/config.yaml") == b"model: gpt-5\n"
 ```
 
 ```ts TypeScript
 const running = await client.createSandbox(baseSnapshotId, { name: "setup-box" });
-await running.run("pip install numpy pandas scikit-learn", { timeout: 120 });
+await running.run("pip install numpy pandas scikit-learn", { timeout: 180 });
+await running.write("/opt/config.yaml", "model: gpt-5\n");
 
 const snapshot = await running.captureSnapshot("ml-ready");
+console.log(snapshot.id, snapshot.source_sandbox_id);
 
 await running.delete();
 
 const sandbox = await client.createSandbox(snapshot.id);
 try {
   await sandbox.run("python -c 'import numpy; print(numpy.__version__)'");
+  const cfg = await sandbox.read("/opt/config.yaml");
+  console.log(new TextDecoder().decode(cfg));
 } finally {
   await sandbox.delete();
 }
+```
+
+</CodeGroup>
+
+<Note>
+Capture preserves the **persistent filesystem only**. Installed packages (under `/usr/local`, `/root`, `/opt`, the home directory, etc.) and files you wrote to those locations are kept. Running processes, open sockets, in-memory state, and anything under `/tmp` (which is a tmpfs) are **not** carried over — boot the new sandbox and start the processes you need again.
+</Note>
+
+### Tune capture timing
+
+`capture_snapshot` blocks until the new snapshot is ready. Raise the `timeout` kwarg (default 60s) if your filesystem is large or your storage backend is slow.
+
+<CodeGroup>
+
+```python Python
+snapshot = sb.capture_snapshot("ml-ready-v2", timeout=600)
+```
+
+```ts TypeScript
+const snapshot = await sb.captureSnapshot("ml-ready-v2", { timeout: 600 });
 ```
 
 </CodeGroup>
