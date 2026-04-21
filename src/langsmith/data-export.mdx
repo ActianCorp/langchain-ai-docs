@@ -199,12 +199,12 @@ By default, bulk exports include the following fields for each run:
 | Field | Description |
 |-------|-------------|
 | `tags` | List of tags |
-| `feedback_stats` | Feedback statistics (JSON). See the note below for aggregation limitations. |
+| `feedback_stats` | Feedback statistics (JSON). Refer to the following note for aggregation limitations. |
 
 <Note>
 **`feedback_stats` aggregation limitation**
 
-The `feedback_stats` field only aggregates feedback with simple string values. Feedback with non-string values, such as numeric, boolean, or complex or object types, is excluded from the `feedback_stats` aggregation. If you need to analyze non-string feedback, export the raw feedback data separately.
+The `feedback_stats` field's `value_counts` breakdown only includes feedback with string values. Feedback with non-string values (numeric, boolean, complex types) is excluded from `value_counts` but still contributes to aggregate statistics such as `avg`, `n`, and `stdev`. If you need the full distribution of non-string feedback values, export the raw feedback data separately.
 </Note>
 
 **Token usage & costs:**
