@@ -1,27 +1,27 @@
 ---
-title: "Actian VectorAI integration"
-description: "Integrate with the Actian VectorAI vector store using LangChain Python."
+title: "Actian VectorAI DB integration"
+description: "Integrate with the Actian VectorAI DB vector store using LangChain Python."
 ---
 
->Actian VectorAI enables portable, high-performance vector search for modern AI applications. Built for embedded, edge, on-premises, hybrid, and cloud environments, it delivers low-latency semantic retrieval while keeping data under your control. While it offers a simple, convenient API that supports all LangChain-core vector store methods, it simultaneously provides the flexibility to customize search parameters and utilize extended filtering for advanced use cases.
+>Actian VectorAI DB enables portable, high-performance vector search for modern AI applications. Built for embedded, edge, on-premises, hybrid, and cloud environments, it delivers low-latency semantic retrieval while keeping data under your control. While it offers a simple, convenient API that supports all LangChain-core vector store methods, it simultaneously provides the flexibility to customize search parameters and utilize extended filtering for advanced use cases.
 
 
-This guide provides a quick overview for getting started with the ActianVectorAI [vector store](/oss/integrations/vectorstores#overview). For a detailed listing of all Actian VectorAI features, paramaters, and configurations, head to the [Actian VectorAI LangChain API reference](https://pypi.org/project/langchain-actian-vectorai/).
+This guide provides a quick overview for getting started with the ActianVectorAI [vector store](/oss/integrations/vectorstores#overview). For a detailed listing of all Actian VectorAI DB features, paramaters, and configurations, head to the [Actian VectorAI DB LangChain API reference](https://pypi.org/project/langchain-actian-vectorai/).
 
 ---
 
 ## Setup
 
-To install and run Actian VectorAI using Docker, please see the [Actian VectorAI installation instructions](https://docs.vectoraidb.actian.com/home/installation/instructions). 
-, and install the `langchain-actian-vectorai` integration package.
+To install and run Actian VectorAI DB using Docker, please see the [Actian VectorAI DB installation instructions](https://docs.vectoraidb.actian.com/home/installation/instructions),
+and then install the `langchain-actian-vectorai` integration package.
 
 ### Credentials
 
-There are no credentials required to run the code in this page. However optional API keys can be set up for read, write and admin authentication. For more details on authentication and API key management, please see the [Actian VectorAI access token documentation](https://docs.vectoraidb.actian.com/api-reference/access-tokens/create-access-token).
+You need no credentials to run the code in this page. However, optional API keys can be set up for read, write and admin authentication. For more details on authentication and API key management, please see the [Actian VectorAI DB access token documentation](https://docs.vectoraidb.actian.com/api-reference/access-tokens/create-access-token).
 
 ### Installation
 
-The LangChain Actian VectorAI integration lives in the `langchain-actian-vectorai` package:
+The LangChain Actian VectorAI DB integration lives in the `langchain-actian-vectorai` package:
 
 <CodeGroup>
     ```python pip
@@ -36,7 +36,7 @@ The LangChain Actian VectorAI integration lives in the `langchain-actian-vectora
 
 ## Instantiation
 
-Now we can instantiate our model object and generate responses.
+Now you can instantiate your model object and generate responses.
 Choose your preferred embedding model, and initialize the vector store with the right vector size for the embeddings. 
 
 ```python Initialize your choice of embeddings icon="database"
@@ -71,7 +71,7 @@ vector_store = ActianVectorAIVectorStore(
 
 ### Add items
 
-Document ID can be provided by user in UUID string format. If not provided by the user, a UUID will be automatically generated.
+Document ID can be provided by the user in UUID string format. If not provided, a UUID will be automatically generated.
 
 ```python Add documents icon="folder-plus"
 from langchain_core.documents import Document
@@ -97,7 +97,7 @@ vector_store.add_documents(documents=documents, ids=uuids)
 
 ### Update items
 
-Adding a document with an existing ID will update the document in place. This allows you to easily update documents without needing to delete and re-add them.
+Adding a document with an existing ID will update the document in place. This allows you to easily update documents without needing to delete and readd them.
 
 ```python Update document by ID icon="pencil"
 updated_document = Document(
@@ -118,7 +118,7 @@ vector_store.delete(ids=[uuids[-1]])
 
 ## Query vector store
 
-Once your vector store has been created and the relevant documents have been added you will most likely wish to query it during the running of your chain or agent.
+Once your vector store has been created and the relevant documents have been added, you can query it during the running of your chain or agent.
 
 ### Directly
 
@@ -160,7 +160,7 @@ retriever.invoke("Tell me about the lunar surface.")
 
 ### Metadata filtering
 
-Actian VectorAI supports advanced filtering capabilities to help you narrow down search results based on specific criteria. You can use a variety of operators to create complex filters that suit your needs. Here are some examples of how to use metadata filtering in your similarity searches. For a full list of supported operators and filter syntax, please refer to the [Actian VectorAI LangChain API reference](https://pypi.org/project/langchain-actian-vectorai/).
+Actian VectorAI DB supports advanced filtering capabilities to help you narrow down search results based on specific criteria. You can use a variety of operators to create complex filters that suit your needs. Here are some examples of how to use metadata filtering in your similarity searches. For a full list of supported operators and filter syntax, please refer to the [Actian VectorAI DB LangChain API reference](https://pypi.org/project/langchain-actian-vectorai/).
 
 ```python Metadata filtering icon="filter"
 # Arbitrary range with keyword bounds
@@ -202,7 +202,7 @@ results = vector_store.similarity_search(
 
 ### Relevance search 
 
-Actian VectorAI supports relevance search using Maximal Marginal Relevance (MMR) to help you find results that are not only similar to your query but also diverse from each other. 
+Actian VectorAI DB supports relevance search using Maximal Marginal Relevance (MMR) to help you find results that are not only similar to your query but also diverse from each other. 
 ```python Relevance search icon="chart-bar"
 #enable MMR in retriever
 retriever = vector_store.as_retriever(
@@ -225,7 +225,7 @@ results = vector_store.max_marginal_relevance_search(
 
 ### Customize distance functions
 
-Actian VectorAI supports multiple distance metrics for similarity search, including Cosine, Euclidean (L2), and Dot product. You can specify the distance metric to use when performing a similarity search:
+Actian VectorAI DB supports multiple distance metrics for similarity search, including Cosine, Euclidean (L2), and Dot product. You can specify the distance metric to use when performing a similarity search:
 
 ```python Distance functions icon="ruler"
 # Create a collection with three named vector spaces
@@ -240,7 +240,7 @@ client.collections.create(
 ```
 ### Customize index types and optimizer parameters
 
-Actian VectorAI provides the flexibility to specify optional parameters to customize the indexing and search process.
+Actian VectorAI DB provides the flexibility to specify optional parameters to customize the indexing and search process.
 
 ```python Indexing parameters icon="tags"
 from actian_vectorai import HnswConfigDiff, OptimizersConfigDiff, SearchParams
