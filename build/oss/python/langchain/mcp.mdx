@@ -240,7 +240,7 @@ async with client.session("server_name") as session:  # [!code highlight]
     # Pass the session to load tools, resources, or prompts
     tools = await load_mcp_tools(session)  # [!code highlight]
     agent = create_agent(
-        "anthropic:claude-3-7-sonnet-latest",
+        "google_genai:gemini-3.1-pro-preview",
         tools
     )
 ```
@@ -966,10 +966,10 @@ ElicitResult(action="cancel")
 ---
 
 <div className="source-links">
-<Callout icon="edit">
-    [Edit this page on GitHub](https://github.com/langchain-ai/docs/edit/main/src/oss/langchain/mcp.mdx) or [file an issue](https://github.com/langchain-ai/docs/issues/new/choose).
-</Callout>
 <Callout icon="terminal-2">
     [Connect these docs](/use-these-docs) to Claude, VSCode, and more via MCP for real-time answers.
+</Callout>
+<Callout icon="edit">
+    [Edit this page on GitHub](https://github.com/langchain-ai/docs/edit/main/src/oss/langchain/mcp.mdx) or [file an issue](https://github.com/langchain-ai/docs/issues/new/choose).
 </Callout>
 </div>
